@@ -25,7 +25,7 @@ def get_data_power_spectrum(telescope):
             ell,Dl = data[0],data[1]
         else:
             print('No best fit angular power spectrum for that telescope')
-        
+
         return {'ell':ell,'C':2*np.pi*Dl/(ell*(ell+1))}
     except:
         print('error in pyCE.access_data.online.get_data_power_spectrum')

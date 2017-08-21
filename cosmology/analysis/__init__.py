@@ -15,3 +15,7 @@ def ce_density(mf):
     ce = np.nansum(ced)
     return ce, ced
 
+def kl_divergence(p,q):
+    pq = p/q
+    pq[q==0] = np.nan
+    return np.nansum(p*np.log2(pq))
