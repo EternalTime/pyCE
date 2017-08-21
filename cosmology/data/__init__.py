@@ -1,10 +1,10 @@
-#------------------------------------------------------------------ LIBRARIES
+#--------------------------------------------------------------------- LIBRARIES
 
 import urllib2 as ul
 import numpy as np
 from astropy.io import fits
 
-#------------------------------------------------------------------- FUNCTIONS
+#--------------------------------------------------------------------- FUNCTIONS
 
 def get_data_power_spectrum(telescope):
     try:
@@ -29,3 +29,19 @@ def get_data_power_spectrum(telescope):
         return {'ell':ell,'C':2*np.pi*Dl/(ell*(ell+1))}
     except:
         print('error in pyCE.access_data.online.get_data_power_spectrum')
+
+def read_power_spectrum(telescope = 'Planck', psType = 'TT'):
+    try:
+        if telescope in ['Planck','planck']:
+            url = ('http://irsa.ipac.caltech.edu/data/Planck/release_2/anci' +
+                  'llary-data/cosmoparams/COM_PowerSpect_CMB_R2.02.fits')
+            hdulist = fits.open(url)
+            if psType in ['TT','tt']:
+                ell = (np.array(map(float,np.append(hdulist['TTLOLUNB'].
+                    data.field(0),hdulist['TTHILUNB'].data.field(0)))))
+                Dl  = np.append(hdulist['TTLOLUNB'].data.field(1),
+                    hdulist['TTHILUNB'].data.field(1))
+        elif telescope in ['WMAP','wmap']:
+            if psType in ['TT','tt']:
+                myFile = open('/wmap/wmap_tt_spectrum_9yr_v5.txt','r')
+                data = [line for line in myFile.readlines()]
