@@ -1,2 +1,2 @@
 # pyCE
-A library for projects realted to Configurational Entropy
+A library for projects related to Configurational Entropy
