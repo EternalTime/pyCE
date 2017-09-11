@@ -15,27 +15,34 @@ def nonparametric_fit(data,error,basis,lType = 'NSS',maxJ = 100):
                     Outputs a dictionary containing the nonparametric best fit
                     (nbf) of the data with respect to the basis. Also returns
                     the risk function (Risk) and the effective degrees of
-                    freedom (EDoF)
+                    freedom (EDoF). The algorithm follows 1107.0516v2.
     ----------------------------------------------------------------------------
     """
     N = len(data)
     Y = data
-    E = np.diag(1/error**2)
-    B = np.diag(error**2)/N
-
+    E = np.diag(1/error**2) #initialize inverse variance
+    B = np.diag(error**2)/N #this should actually be the covariance matrix, but
+    # until we get that we'll settle for just the variance and leave the off-
+    # diagonal terms = 0
     x = (2.*np.array(list(range(N)))+1.)/(2.*N)
-
+    # Make the Unitary matrix from the basis. if the basis is wrong then the
+    # resulting matrix will not be orthogonal and the algorithm will output
+    # bullshit. TODO: add a check to ensure U is orthogonal
     U = np.ones([N,N])
     for i in range(1,N):
         U[:,i] = basis(i,x)
     U = U/np.sqrt(N)
-    plt.imshow(U)
-
+    #Use the U matrix in a few places to make the B, W, and Z matrices
+    # (see the paper if this is confusing)
     B = np.dot(np.dot(np.transpose(U),B),U)
     Z = np.dot(np.transpose(U),Y)/np.sqrt(N)
     W = np.dot(np.transpose(U),np.dot(E,U))
 
+    # implements the Nested Subset Selection choice for shrinkage
+    # TODO: implement some other shrinkage choices (exponential?)
+    print('\n---------------- Calculating Risk ---------------')
     if lType in ['NSS']:
+        print('Shrinkage Method:         Nested Subset Selection\n')
         R = np.zeros(maxJ)
         EDoF = np.zeros(np.shape(R))
 
@@ -49,5 +56,12 @@ def nonparametric_fit(data,error,basis,lType = 'NSS',maxJ = 100):
             EDoF[j-1] = sum(np.diagonal(D))
         J = list(R).index(min(R[1::]))+1
 
-        print('NPfit optimized at J = ' + str(J))
+        print('\nNPfit optimized at J = ' + str(J))
         return {'nbf':np.sqrt(N)*np.dot(U,([1]*j+[0]*(N-j))*Z),'Risk':R,'EDoF':EDoF}
+
+
+def basis_cos(j,x):
+    if j == 0:
+        return np.ones(np.shape(x))
+    else:
+        return 1.4142135623730951*np.cos(j*np.pi*x)
