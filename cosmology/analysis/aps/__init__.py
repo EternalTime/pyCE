@@ -1,5 +1,7 @@
 import numpy as np
 
+#----------------------------------------------------------------------FUNCTIONS
+
 def norm(p):
     """
     ----------------------------------------------------------------------------
@@ -58,7 +60,7 @@ def entropy(p):
     INPUT:      p (array) a modal fraction
     ----------------------------------------------------------------------------
     OUTPUT:     h (positive real number)
-                Returns the Shannon Entropy of the p distribution. 
+                Returns the Shannon Entropy of the p distribution.
     ----------------------------------------------------------------------------
     """
     p[p<=0] = np.nan
