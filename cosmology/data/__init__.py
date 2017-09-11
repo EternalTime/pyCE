@@ -60,6 +60,6 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                 ell = data[:,0]
                 if ps in ['TT','tt']:
                     Dl = data[:,1]
-            return {'ell':ell,'Dl':Dl,'Cl':2*np.pi*Dl/(ell*(ell+1)),'error':error}
+            return {'ell':ell,'Dl':Dl,'Cl':2*np.pi*Dl/(ell*(ell+1))}
     except:
         print('Something went wrong reading the file')
