@@ -1,4 +1,5 @@
 import cosmology
 
 def reload():
-    import cosmology
+    reload(cosmology)
+    cosmology.reload()
