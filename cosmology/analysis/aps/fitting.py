@@ -27,7 +27,7 @@ def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
     ----------------------------------------------------------------------------
     INPUT:          data    (array)
                     error   (array)
-                    U       (array) orthogonal matrix made from basis
+                    U       (array) Orthogonal basis matrix
     ----------------------------------------------------------------------------
     OUTPUT:         dic     (dictionary, keys: nbf, Risk, EDoF)
                     Outputs a dictionary containing the nonparametric best fit
@@ -70,4 +70,4 @@ def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
         J = list(R).index(min(R[1::]))+minJ
 
         print('\nNPfit optimized at J = ' + str(J))
-        return {'nbf':np.sqrt(N)*np.dot(U,([1]*j+[0]*(N-j))*Z),'Risk':R,'EDoF':EDoF}
+        return {'nbf':np.sqrt(N)*np.dot(U,([1]*J+[0]*(N-J))*Z),'Risk':R,'EDoF':EDoF}
