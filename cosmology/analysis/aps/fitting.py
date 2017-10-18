@@ -56,18 +56,23 @@ def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
     print('\n---------------- Calculating Risk ---------------')
     if lType in ['NSS']:
         print('Shrinkage Method:         Nested Subset Selection\n')
-        R = np.zeros(maxJ-minJ+1)
-        EDoF = np.zeros(np.shape(R))
+        myD = lambda j:np.diag([1]*j+[0]*(N-j))
+    elif lType in ['Fractional']:
+        print('Shrinkage Method:         Fractional Monotone Shrinkage\n')
+        myD = lambda j:np.diag(map(lambda x:2**-x,range(0,N)))
 
-        for j in tqdm.tqdm(range(minJ,maxJ+1)):
-            D = np.diag([1]*j+[0]*(N-j))
-            Db = np.eye(N)-D
-            temp = [np.dot(np.dot(np.dot(np.dot(np.transpose(Z),Db),W),Db),Z),
-                    np.trace(np.dot(np.dot(np.dot(D,W),D),B)),
-                    -np.trace(np.dot(np.dot(np.dot(Db,W),Db),B))]
-            R[j-minJ] = sum(temp)
-            EDoF[j-minJ] = j#sum(np.diagonal(D))
-        J = list(R).index(min(R[1::]))+minJ
+    R = np.zeros(maxJ-minJ+1)
+    EDoF = np.zeros(np.shape(R))
 
-        print('\nNPfit optimized at J = ' + str(J))
-        return {'nbf':np.sqrt(N)*np.dot(U,([1]*J+[0]*(N-J))*Z),'Risk':R,'EDoF':EDoF}
+    for j in tqdm.tqdm(range(minJ,maxJ+1)):
+        D = myD(j)
+        Db = np.eye(N)-D
+        temp = [np.dot(np.dot(np.dot(np.dot(np.transpose(Z),Db),W),Db),Z),
+                np.trace(np.dot(np.dot(np.dot(D,W),D),B)),
+                -np.trace(np.dot(np.dot(np.dot(Db,W),Db),B))]
+        R[j-minJ] = sum(temp)
+        EDoF[j-minJ] = j#sum(np.diagonal(D))
+    J = list(R).index(min(R[1::]))+minJ
+
+    print('\nNPfit optimized at J = ' + str(J))
+    return {'nbf':np.sqrt(N)*np.dot(U,([1]*J+[0]*(N-J))*Z),'Risk':R,'EDoF':EDoF}
