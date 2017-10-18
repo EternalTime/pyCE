@@ -46,7 +46,6 @@ def KL_divergence(p,q):
                 Returns the Kullback-Liebler divergence from q to p. Note that
                 divergence is not symmetric. For more on the information measure
                 see: add website
-                Integration uses the trapezoidal rule implemented in NumPy.
     ----------------------------------------------------------------------------
     """
     q[q==0] = np.nan
