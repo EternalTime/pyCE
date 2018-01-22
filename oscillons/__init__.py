@@ -90,8 +90,8 @@ class oscillon:
                                 + .5*self._F(fields_old))
         while error > self._tol:
             fields_new  = fields_0 + .5*self.dt*self._F(fields_old)
-            error       = _L2_norm(fields_new[:,1:self._Ncap],
-                                    fields_old[:,1:self._Ncap])
+            error       = _L2_norm(fields_new[:,1:],
+                                    fields_old[:,1:])
             fields_old  = 1.*fields_new
 
         return fields_new
