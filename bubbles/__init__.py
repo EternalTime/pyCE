@@ -2,6 +2,15 @@ import numpy as np
 import scipy.special as sp
 
 class critical_bubble:
+    """
+    ----------------------------------------------------------------------------
+    FUNCTION:   
+    ----------------------------------------------------------------------------
+    INPUT:
+    ----------------------------------------------------------------------------
+    OUTPUT:
+    ----------------------------------------------------------------------------
+    """
     #Remember d is the number of SPATIAL dimensions
     def __init__(self,asymmetry_factor,dimension,N):
         eps     = np.finfo(np.float128).eps
