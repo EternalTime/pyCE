@@ -9,7 +9,7 @@ import scipy.special as sp
 class oscillon:
     """
     ----------------------------------------------------------------------------
-    OSCILLON CLASS
+    OSCILLON ENVIRONMENT CLASS
     ----------------------------------------------------------------------------
     Creates an environment in which to simulate an oscillon. Sets up the lattice
     with an MIB coordinate system. Set's up the potential, using the Kolb and
@@ -29,25 +29,31 @@ class oscillon:
             courant_factor  -- ratio of dt/dx                       DEFAULT: 0.5
     ----------------------------------------------------------------------------
     """
-    def __init__(self,asymmetry_factor = 0.,dimension = 3,N = 1000,
-                    radius_max = 30, radius_MIB = 29, delta_MIB = .5,
-                    radius_cap = 20, tol = 10**-8, dissipation = 1.0,
+    def __init__(self,asymmetry_factor = 0.,
+                    dimension = 3,
+                    N = 1000,
+                    radius_max = 30,
+                    radius_MIB = 29,
+                    delta_MIB = .5,
+                    radius_cap = 20,
+                    tol = 10**-8,
+                    dissipation = 1.0,
                     courant_factor = .5):
-        self.d  = dimension
-        self.N  = N
-        self.alpha = 3./np.sqrt(2)*(1+asymmetry_factor)
+        self.d      = dimension
+        self.N      = N
+        self.alpha  = 3./np.sqrt(2)*(1+asymmetry_factor)
 
-        self.r  = np.linspace(0,radius_max,N)
-        self.dr = np.mean(np.diff(self.r))
-        self.dt = courant_factor*self.dr
+        self.r      = np.linspace(0,radius_max,N)
+        self.dr     = np.mean(np.diff(self.r))
+        self.dt     = courant_factor*self.dr
 
         self._courant_factor = courant_factor
         self._dissipation_factor = dissipation
-        self._rmax = radius_max
-        self._rcap = radius_cap
+        self._rmax  = radius_max
+        self._rcap  = radius_cap
+        self._Ncap  = int(sum(self.r<=radius_cap))
+        self._tol   = tol
         self._define_boost_factor(radius_MIB,delta_MIB)
-        self._Ncap = int(sum(self.r<=radius_cap))
-        self._tol = tol
 
     def initialize_field(self,field_type = 'gaussian', *params):
         if field_type == 'gaussian':
@@ -94,9 +100,10 @@ class oscillon:
                                     fields_old[:,1:])
             fields_old  = 1.*fields_new
 
+        self._timestep_update()
         return fields_new
 
-    def _timestep_start(self):
+    def _simulation_start(self):
         self._rt        = self.r
         self._rtd       = self.r**(self.d-1)
         self._a         = np.ones(len(self.r))
@@ -161,8 +168,12 @@ class oscillon:
                 T[1,self._Ncap]*self.dt)
         return E,dE
 
-    def simulate_oscillon(self,fields,printTag = True,saveTag = False):
-        self._timestep_start()
+    def simulate_oscillon(self,fields,
+                            plot_profile = True,
+                            plot_energy_density = False,
+                            plot_energy_shells = False,
+                            saveTag = False):
+        self._simulation_start()
         t = [0]
         SET = self.stress_energy_tensor(fields)
         E0,dE = self.energy(SET)
@@ -171,22 +182,59 @@ class oscillon:
         n = 0
         while E > .01*E0:
             fields = self._timestep(fields)
-            self._timestep_update()
             if np.mod(n,30) == 0:
                 SET = self.stress_energy_tensor(fields)
                 E,dE = self.energy(SET)
                 energy_history.append(E)
                 t.append(t[-1]+100*self.dt)
-                if printTag == True:
-                    plt.clf()
-                    plt.plot(self._rt,fields[0],',',markersize = .2)
-                    plt.ylim([-1,2])
-                    plt.xlim([0,50])
-                    plt.draw()
-                    plt.pause(.00000000001)
+                if plot_profile:
+                    self._plot_profile(fields)
+                if plot_energy_density:
+                    self._plot_energy_density(SET)
+                if plot_energy_shells:
+                    self._plot_energy_shells(SET)
             n = n+1
         self.E = np.array(energy_history)
         self.time = np.array(t)
+
+    def _plot_profile(self,fields):
+        x = self.r
+        y = np.abs(fields[0])
+        plt.figure(1)
+        plt.clf()
+        plt.semilogy(x,y,',')
+        plt.ylim([10**-8,2])
+        plt.xlim([0,self.r[-1]])
+        plt.xlabel('$r$')
+        plt.ylabel('$\phi$',rotation = 0)
+        plt.draw()
+        plt.pause(.0000000000001)
+
+    def _plot_energy_density(self,T):
+        x = self.r
+        y = np.abs(T[0])
+        plt.figure(2)
+        plt.clf()
+        plt.semilogy(x,y,',')
+        plt.ylim([10**-8,100])
+        plt.xlim([0,self.r[-1]])
+        plt.xlabel('$r$')
+        plt.ylabel('$\\rho$',rotation = 0)
+        plt.draw()
+        plt.pause(.0000000000001)
+
+    def _plot_energy_shells(self,T):
+        x = self.r
+        y = np.abs(T[0])*self._a*self._rtd
+        plt.figure(3)
+        plt.clf()
+        plt.semilogy(x,y,',')
+        plt.ylim([10**-8,100])
+        plt.xlim([0,self.r[-1]])
+        plt.xlabel('$r$')
+        plt.ylabel('$\\rho$',rotation = 0)
+        plt.draw()
+        plt.pause(.0000000000001)
 
 def sphere_solid_angle(d):
     return 2*np.pi**(d/2.0)/np.math.gamma(d/2.0)
