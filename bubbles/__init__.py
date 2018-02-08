@@ -1,10 +1,10 @@
 import numpy as np
-import scipy.special as sp
+from pyCE.math import radialFT,sphere_solid_angle,radial_integrate
 
 class critical_bubble:
     """
     ----------------------------------------------------------------------------
-    FUNCTION:   
+    FUNCTION:
     ----------------------------------------------------------------------------
     INPUT:
     ----------------------------------------------------------------------------
@@ -112,37 +112,3 @@ class critical_bubble:
         self.B  = np.array(B)
         self.DB = np.array(DB)
         self.r  = np.array(r)
-
-    #def __FourierTransform__(self):
-    #    c = sphere_solid_angle(self.d)*fourier_factor(self.d)
-    #    self.dk = .05*np.pi/self.r[-1]
-    #    k = np.array(range(len(self.r)))*self.dk
-    #    ft = c*np.trapz(
-    #            np.sin(np.outer(k,self.r))*(self.r**(self.d-2)*self.rho)
-    #            ,k)/k
-    #    ft[0] = c*np.trapz(self.rho*self.r**(self.d-1),self.r)
-    #    self.denFT = ft
-    #    self.k = k
-
-def radialFT(d,rho,r):
-    k = np.array(range(5*len(r)))*np.pi/(10*r[-1])
-    if d>1:
-        a      = float(d)/2.0
-        ft     = np.zeros(np.shape(k))
-        ft[1:] = np.sqrt(np.pi)*(2.0**(a-2))*(k[1:]**(1-a))*np.trapz(rho*sp.jv(a-1,np.outer(k[1:],r))*(r**a),r)
-        #This uses finite differences to get hte value at k=0
-        ft[0]  = sum(np.array([287/48.0, -(61/4.0), 1033/48.0, -(109/6.0), 147/16.0, -(31/12.0), 5/16.0])*ft[1:8])
-    else:
-        ft = np.trapz(np.cos(np.outer(k,r))*rho,r)
-    #normalizes to ensure Plancheral's theorem holds
-    ft = ft*np.sqrt(radial_integrate(r,np.abs(rho)**2,d)/radial_integrate(k,np.abs(ft)**2,d))
-    return ft,k
-
-def sphere_solid_angle(d):
-    return 2*np.pi**(d/2.0)/np.math.gamma(d/2.0)
-
-def fourier_factor(d):
-    return 1.0/(2*np.pi)**(d/2.0)
-
-def radial_integrate(x,y,d):
-    return sphere_solid_angle(d)*np.trapz(y*x**(d-1),x)

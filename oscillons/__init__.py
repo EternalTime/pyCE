@@ -5,6 +5,7 @@ import matplotlib
 import os
 import tqdm
 import scipy.special as sp
+from pyCE.math import sphere_solid_angle,radial_integrate,radialFT
 
 class oscillon:
     """
@@ -172,7 +173,8 @@ class oscillon:
                             plot_profile = True,
                             plot_energy_density = False,
                             plot_energy_shells = False,
-                            saveTag = False):
+                            saveTag = False,
+                            num_E_steps = 30):
         self._simulation_start()
         t = [0]
         SET = self.stress_energy_tensor(fields)
@@ -182,18 +184,18 @@ class oscillon:
         n = 0
         while E > .01*E0:
             fields = self._timestep(fields)
-            if np.mod(n,30) == 0:
+            if np.mod(n,num_E_steps) == 0:
                 SET = self.stress_energy_tensor(fields)
                 E,dE = self.energy(SET)
                 energy_history.append(E)
-                t.append(t[-1]+100*self.dt)
+                t.append(t[-1]+num_E_steps*self.dt)
                 if plot_profile:
                     self._plot_profile(fields)
                 if plot_energy_density:
                     self._plot_energy_density(SET)
                 if plot_energy_shells:
                     self._plot_energy_shells(SET)
-            n = n+1
+            n = n + 1
         self.E = np.array(energy_history)
         self.time = np.array(t)
 
@@ -235,12 +237,6 @@ class oscillon:
         plt.ylabel('$\\rho$',rotation = 0)
         plt.draw()
         plt.pause(.0000000000001)
-
-def sphere_solid_angle(d):
-    return 2*np.pi**(d/2.0)/np.math.gamma(d/2.0)
-
-def radial_integrate(x,y,d):
-    return sphere_solid_angle(d)*np.trapz(y*x**(d-1),x)
 
 def _L2_norm(y1,y2):
     return np.sqrt(np.mean((y1-y2)**2))
