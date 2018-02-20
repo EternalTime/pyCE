@@ -51,8 +51,8 @@ class oscillon:
                     radius_MIB = 29,
                     delta_MIB = .5,
                     radius_cap = 20,
-                    tol = 10**-8,
-                    dissipation = 1.0,
+                    tol = 10**-16,
+                    dissipation = 0.8,
                     courant_factor = .5):
         self.d      = dimension
         self.N      = N
@@ -115,14 +115,17 @@ class oscillon:
     def _timestep(self,fields):
         error = 1.0
         fields_old  = fields*1.0
-        fields_0    = fields_old + self.dt*( self._dissipation(fields_old)
-                                + .5*self._F(fields_old))
+        fields_0    = fields_old + .5*self.dt*(self._F(fields_old)
+                                        + .5*self._dissipation(fields))
         while error > self._tol:
             fields_new  = fields_0 + .5*self.dt*self._F(fields_old)
+            fields_new[1,1] = (10*fields_new[1,2]-10*fields_new[1,3]
+                                +5*fields_new[1,4]-fields_new[1,5])/5.0
+            fields_new[1,0] = 0
             error       = _L2_norm(fields_new[:,1:],
                                     fields_old[:,1:])
             fields_old  = 1.*fields_new
-
+        fields_new = fields_new + .5*self.dt*( self._dissipation(fields_new))
         self._timestep_update()
         return fields_new
 
@@ -157,33 +160,52 @@ class oscillon:
         dF[0]   = f2/self._a+self._b*f1
 
         dF[1]       = np.convolve(dF[0],[.5,0,-.5],'same')/self.dr
-        dF[1,-1]    = (3*f0[-5] - 16*f0[-4] + 36*f0[-3]
-                        -48*f0[-2] + 25*f0[-1])/(12*self.dr)
-        dF[1,0]     = (-25*f0[0] + 48*f0[1] - 36*f0[2]
-                        + 16*f0[1] - 3*f0[4])/(12*self.dr)
+        dF[1,-1]    = -dF[1,-5]+4*dF[1,-4]-6*dF[1,-3]+4*dF[1,-2]
+                    #finite difference stencil not converging
+                    #(3*f0[-5] - 16*f0[-4] + 36*f0[-3]
+                    #    -48*f0[-2] + 25*f0[-1])/(12*self.dr)
+        dF[1,0]     = 0
+                    #fitting to the origin seems to break the regularity
+                    #4*dF[1,1] - 6*dF[1,2] + 4*dF[1,3] - dF[1,4]
+                    #finite difference stencil not converging
+                    #(-25*f0[0] + 48*f0[1] - 36*f0[2]
+                    #    + 16*f0[1] - 3*f0[4])/(12*self.dr)
+        dF[1,1]     = (10*dF[1,2]-10*dF[1,3]+5*dF[1,4]-dF[1,5])/5.0
 
         temp        = (self._b*f2 + f1/self._a)*self._rtd
         dF[2]       = np.convolve(temp,[.5,0,-.5],'same')/self._drd
-        dF[2,-1]    = (3*temp[-5] - 16*temp[-4] + 36*temp[-3]
-                        -48*temp[-2] + 25*temp[-1])/(12*self.drd)
-        dF[2,0]     = (-25*temp[0] + 48*temp[1] - 36*temp[2]
-                        + 16*temp[1] - 3*temp[4])/(12*self.drd)
+        dF[2,-1]    = -dF[2,-5]+4*dF[2,-4]-6*dF[2,-3]+4*dF[2,-2]
+                    #finite difference stencil not converging
+                    #(3*temp[-5] - 16*temp[-4] + 36*temp[-3]
+                    #    -48*temp[-2] + 25*temp[-1])/(12*self._drd[-1])
+
+        dF[2,0]     = 4*dF[2,1] - 6*dF[2,2] + 4*dF[2,3] - dF[2,4]
+                    #(-25*temp[0] + 48*temp[1] - 36*temp[2]
+                    #    + 16*temp[1] - 3*temp[4])/(12*self._drd[0])
 
         dF[2]       = self._a*(self.d*dF[2] - self._gradient_potential(f0))
         dF[2,1:]    = dF[2,1:] - (self.d-1)*self._f[1:]/self._rt[1:]*f2[1:]
-        dF[2,0]     = dF[2,1]
-        dF[2,-1]    = dF[2,-2]
+        dF[2,0]     = 4*dF[2,1] - 6*dF[2,2] + 4*dF[2,3] - dF[2,4]
+        dF[2,-1]    = -dF[2,-5]+4*dF[2,-4]-6*dF[2,-3]+4*dF[2,-2]
 
         return dF
 
     def _dissipation(self,fields):
         dF = np.array(map(lambda f:
                             np.convolve(f,[1.,-4.,6.,-4.,1.],'same'),fields))
-        dF[:,0:1]   = 0
-        dF[:,1:2]   = 0
-        dF[:,-2:-1] = 0
-        dF[:,-1:]   = 0
-        return -self._dissipation_factor*dF*self._courant_factor**4/self.dr**4
+        dF[:,0:1]   = 0#(35*fields[:,0:1] - 186*fields[:,1:2] + 411*fields[:,2:3]
+                    #    - 484*fields[:,3:4] + 321*fields[:,4:5]
+                    #    - 114*fields[:,5:6] + 17*fields[:,6:7])/6.0
+        dF[:,1:2]   = 0#(17*fields[:,0:1] - 84*fields[:,1:2] + 171*fields[:,2:3]
+                    #    - 184*fields[:,3:4] + 11*fields[:,4:5]
+                    #    - 36*fields[:,5:6]  + 5*fields[:,6:7])/6.0
+        dF[:,-2:-1] = 0#(5*fields[:,-7:-6] - 36*fields[:,-6:-5] + 111*fields[:,-5:-4]
+                    #    - 184*fields[:,-4:-3] + 171*fields[:,-3:-2]
+                    #    - 84*fields[:,-2:-1] + 17*fields[:,-1:])/6.0
+        dF[:,-1:]   = 0# (17*fields[:,-7:-6] - 114*fields[:,-6:-5] + 321*fields[:,-5:-4]
+                    #    - 484*fields[:,-4:-3] + 411*fields[:,-3:-2]
+                    #    - 186*fields[:,-2:-1] + 35*fields[:,-1:])/6.0
+        return -self._dissipation_factor*dF*self._courant_factor**4
 
     def stress_energy_tensor(self,fields):
         V   = self._potential(fields[0])
@@ -221,7 +243,7 @@ class oscillon:
                 core.append(fields[0][0])
                 t.append(t[-1]+num_E_steps*self.dt)
                 if plot_profile:
-                    self._plot_profile(fields)
+                    self._plot_profile(fields,3)
                 if plot_energy_density:
                     self._plot_energy_density(SET)
                 if plot_energy_shells:
@@ -231,16 +253,18 @@ class oscillon:
         self.time = np.array(t)
         self.core = core
 
-    def _plot_profile(self,fields):
+    def _plot_profile(self,fields,num_fields):
         x = self.r
-        y = np.abs(fields[0])
         plt.figure(1)
         plt.clf()
-        plt.semilogy(x,y,',')
-        plt.ylim([10**-8,2])
-        plt.xlim([0,self.r[-1]])
-        plt.xlabel('$r$')
-        plt.ylabel('$\phi$',rotation = 0)
+        for n in range(num_fields):
+            plt.subplot(num_fields,1,n+1)
+            y = np.abs(fields[n])
+            plt.semilogy(x,y,',')
+            plt.ylim([10**-8,2.5])
+            plt.xlim([0,self.r[-1]])
+            #plt.xlabel('$r$')
+            #plt.ylabel('$\phi$',rotation = 0)
         plt.draw()
         plt.pause(.0000000000001)
 
@@ -250,7 +274,7 @@ class oscillon:
         plt.figure(2)
         plt.clf()
         plt.semilogy(x,y,',')
-        plt.ylim([10**-8,100])
+        plt.ylim([10**-12,100])
         plt.xlim([0,self.r[-1]])
         plt.xlabel('$r$')
         plt.ylabel('$\\rho$',rotation = 0)
@@ -263,10 +287,10 @@ class oscillon:
         plt.figure(3)
         plt.clf()
         plt.semilogy(x,y,',')
-        plt.ylim([10**-8,100])
+        plt.ylim([10**-20,100])
         plt.xlim([0,self.r[-1]])
         plt.xlabel('$r$')
-        plt.ylabel('$\\rho$',rotation = 0)
+        plt.ylabel('$\\rho r^d$',rotation = 0)
         plt.draw()
         plt.pause(.0000000000001)
 
