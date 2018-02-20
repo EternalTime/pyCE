@@ -14,7 +14,16 @@ class oscillon:
     ----------------------------------------------------------------------------
     Creates an environment in which to simulate an oscillon. Sets up the lattice
     with an MIB coordinate system. Set's up the potential, using the Kolb and
-    Turner
+    Turner parametrization.
+
+    First create an environment:
+        osc_env = oscillon(KWARGS)
+    Then initialize a field:
+        fields = osc_env.initialize_field(KWARGS)
+    Run the simulation:
+        osc_env.simulate_oscillon(fields,KWARGS)
+    Once the simulation is complete, you can examine aspects of the oscillon by
+    typing osc_env.aspect
     ----------------------------------------------------------------------------
     KWARGS: asymmetry_factor-- K&T dimensionless potential, epsilon DEFAULT: 0
             dimension       -- number of spatial dimensions         DEFAULT: 3
@@ -28,6 +37,11 @@ class oscillon:
                                                                     DEFAULT: 10**-8
             dissipation     -- strength of dissipation              DEFAULT: 1.0
             courant_factor  -- ratio of dt/dx                       DEFAULT: 0.5
+    ----------------------------------------------------------------------------
+    ASPECTS:    E           -- Energy history of the oscillon
+            core            -- Core value history
+            time            -- Array of time values for energy/core histories
+
     ----------------------------------------------------------------------------
     """
     def __init__(self,asymmetry_factor = 0.,
@@ -57,6 +71,14 @@ class oscillon:
         self._define_boost_factor(radius_MIB,delta_MIB)
 
     def initialize_field(self,field_type = 'gaussian', *params):
+        """
+        --------------------------------------------------------------------
+        Field types supported:
+
+        gaussian    - use a single parameter to describe the radius of the
+                    gaussian. Note the radius = Sqrt(2)*sigma
+        --------------------------------------------------------------------
+        """
         if field_type == 'gaussian':
             r0 = params[0]
             A  = .5*(self.alpha+np.sqrt(self.alpha**2-4))
@@ -135,11 +157,18 @@ class oscillon:
         dF[0]   = f2/self._a+self._b*f1
 
         dF[1]       = np.convolve(dF[0],[.5,0,-.5],'same')/self.dr
-        dF[1,0]     = 0
-        dF[1,-1]    = 0
+        dF[1,-1]    = (3*f0[-5] - 16*f0[-4] + 36*f0[-3]
+                        -48*f0[-2] + 25*f0[-1])/(12*self.dr)
+        dF[1,0]     = (-25*f0[0] + 48*f0[1] - 36*f0[2]
+                        + 16*f0[1] - 3*f0[4])/(12*self.dr)
 
-        temp        = (self._b*f2+f1/self._a)*self._rtd
+        temp        = (self._b*f2 + f1/self._a)*self._rtd
         dF[2]       = np.convolve(temp,[.5,0,-.5],'same')/self._drd
+        dF[2,-1]    = (3*temp[-5] - 16*temp[-4] + 36*temp[-3]
+                        -48*temp[-2] + 25*temp[-1])/(12*self.drd)
+        dF[2,0]     = (-25*temp[0] + 48*temp[1] - 36*temp[2]
+                        + 16*temp[1] - 3*temp[4])/(12*self.drd)
+
         dF[2]       = self._a*(self.d*dF[2] - self._gradient_potential(f0))
         dF[2,1:]    = dF[2,1:] - (self.d-1)*self._f[1:]/self._rt[1:]*f2[1:]
         dF[2,0]     = dF[2,1]
@@ -154,7 +183,7 @@ class oscillon:
         dF[:,1:2]   = 0
         dF[:,-2:-1] = 0
         dF[:,-1:]   = 0
-        return -self._dissipation_factor*dF*self._courant_factor**4
+        return -self._dissipation_factor*dF*self._courant_factor**4/self.dr**4
 
     def stress_energy_tensor(self,fields):
         V   = self._potential(fields[0])
@@ -181,6 +210,7 @@ class oscillon:
         E0,dE = self.energy(SET)
         E = 1.*E0
         energy_history = [E0]
+        core = [fields[0][0]]
         n = 0
         while E > .01*E0:
             fields = self._timestep(fields)
@@ -188,6 +218,7 @@ class oscillon:
                 SET = self.stress_energy_tensor(fields)
                 E,dE = self.energy(SET)
                 energy_history.append(E)
+                core.append(fields[0][0])
                 t.append(t[-1]+num_E_steps*self.dt)
                 if plot_profile:
                     self._plot_profile(fields)
@@ -198,6 +229,7 @@ class oscillon:
             n = n + 1
         self.E = np.array(energy_history)
         self.time = np.array(t)
+        self.core = core
 
     def _plot_profile(self,fields):
         x = self.r
