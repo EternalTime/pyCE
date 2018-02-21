@@ -168,8 +168,8 @@ class oscillon:
                     #finite difference stencil not converging
                     #(3*f0[-5] - 16*f0[-4] + 36*f0[-3]
                     #    -48*f0[-2] + 25*f0[-1])/(12*self.dr)
-        dF[1,0]     = (-25*f0[0] + 48*f0[1] - 36*f0[2]
-                        + 16*f0[1] - 3*f0[4])/(12*self.dr)
+        dF[1,0]     = (-25*dF[0,0] + 48*dF[0,1] - 36*dF[0,2]
+                        + 16*dF[0,1] - 3*dF[0,4])/(12*self.dr)
                     #fitting to the origin seems to break the regularity
                     #4*dF[1,1] - 6*dF[1,2] + 4*dF[1,3] - dF[1,4]
                     #finite difference stencil not converging
@@ -192,7 +192,8 @@ class oscillon:
 
     def _dissipation(self,fields):
         dF = np.array(map(lambda f:
-                            np.convolve(f,[1.,-4.,6.,-4.,1.],'same'),fields))
+                            np.convolve(f,[1.,-4.,6.,-4.,1.],'same'),
+                            fields))/self.dr
         dF[:,0:1]   = 0#(35*fields[:,0:1] - 186*fields[:,1:2] + 411*fields[:,2:3]
                     #    - 484*fields[:,3:4] + 321*fields[:,4:5]
                     #    - 114*fields[:,5:6] + 17*fields[:,6:7])/6.0
