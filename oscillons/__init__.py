@@ -51,7 +51,7 @@ class oscillon:
                     radius_MIB = 29,
                     delta_MIB = .5,
                     radius_cap = 20,
-                    tol = 10**-16,
+                    tol = 10**-8,
                     dissipation = 0.8,
                     courant_factor = .5):
         self.d      = dimension
@@ -115,17 +115,21 @@ class oscillon:
     def _timestep(self,fields):
         error = 1.0
         fields_old  = fields*1.0
-        fields_0    = fields_old + .5*self.dt*(self._F(fields_old)
-                                        + .5*self._dissipation(fields))
+        fields_0    = fields_old + self.dt*(.5*self._F(fields_old)
+                                        + self._dissipation(fields))
         while error > self._tol:
+            #iteration step
             fields_new  = fields_0 + .5*self.dt*self._F(fields_old)
+            #implementing boundary conditions
             fields_new[1,1] = (10*fields_new[1,2]-10*fields_new[1,3]
                                 +5*fields_new[1,4]-fields_new[1,5])/5.0
             fields_new[1,0] = 0
+            fields_new[2,0] = fields_new[2,1]
+            fields_new[1,-1] = fields_new[1,-2]
+            fields_new[2,-1] = fields_new[2,-2]
             error       = _L2_norm(fields_new[:,1:],
                                     fields_old[:,1:])
             fields_old  = 1.*fields_new
-        fields_new = fields_new + .5*self.dt*( self._dissipation(fields_new))
         self._timestep_update()
         return fields_new
 
@@ -159,30 +163,26 @@ class oscillon:
         dF      = np.zeros([3,self.N])
         dF[0]   = f2/self._a+self._b*f1
 
-        dF[1]       = np.convolve(dF[0],[.5,0,-.5],'same')/self.dr
+        dF[1,1:(self.N-1)] = np.convolve(dF[0],[.5,0,-.5],'valid')/self.dr
         dF[1,-1]    = -dF[1,-5]+4*dF[1,-4]-6*dF[1,-3]+4*dF[1,-2]
                     #finite difference stencil not converging
                     #(3*f0[-5] - 16*f0[-4] + 36*f0[-3]
                     #    -48*f0[-2] + 25*f0[-1])/(12*self.dr)
-        dF[1,0]     = 0
+        dF[1,0]     = (-25*f0[0] + 48*f0[1] - 36*f0[2]
+                        + 16*f0[1] - 3*f0[4])/(12*self.dr)
                     #fitting to the origin seems to break the regularity
                     #4*dF[1,1] - 6*dF[1,2] + 4*dF[1,3] - dF[1,4]
                     #finite difference stencil not converging
-                    #(-25*f0[0] + 48*f0[1] - 36*f0[2]
-                    #    + 16*f0[1] - 3*f0[4])/(12*self.dr)
+                    #
         dF[1,1]     = (10*dF[1,2]-10*dF[1,3]+5*dF[1,4]-dF[1,5])/5.0
 
         temp        = (self._b*f2 + f1/self._a)*self._rtd
-        dF[2]       = np.convolve(temp,[.5,0,-.5],'same')/self._drd
+        dF[2,1:(self.N-1)]  = (np.convolve(temp,[.5,0,-.5],'valid')/
+                                    self._drd[1:(self.N-1)])
         dF[2,-1]    = -dF[2,-5]+4*dF[2,-4]-6*dF[2,-3]+4*dF[2,-2]
                     #finite difference stencil not converging
                     #(3*temp[-5] - 16*temp[-4] + 36*temp[-3]
                     #    -48*temp[-2] + 25*temp[-1])/(12*self._drd[-1])
-
-        dF[2,0]     = 4*dF[2,1] - 6*dF[2,2] + 4*dF[2,3] - dF[2,4]
-                    #(-25*temp[0] + 48*temp[1] - 36*temp[2]
-                    #    + 16*temp[1] - 3*temp[4])/(12*self._drd[0])
-
         dF[2]       = self._a*(self.d*dF[2] - self._gradient_potential(f0))
         dF[2,1:]    = dF[2,1:] - (self.d-1)*self._f[1:]/self._rt[1:]*f2[1:]
         dF[2,0]     = 4*dF[2,1] - 6*dF[2,2] + 4*dF[2,3] - dF[2,4]
@@ -225,7 +225,7 @@ class oscillon:
                             plot_energy_density = False,
                             plot_energy_shells = False,
                             saveTag = False,
-                            num_E_steps = 30):
+                            num_E_steps = 10):
         self._simulation_start()
         t = [0]
         SET = self.stress_energy_tensor(fields)
@@ -254,14 +254,14 @@ class oscillon:
         self.core = core
 
     def _plot_profile(self,fields,num_fields):
-        x = self.r
+        x = self.r#[0:50]
         plt.figure(1)
         plt.clf()
         for n in range(num_fields):
             plt.subplot(num_fields,1,n+1)
-            y = np.abs(fields[n])
-            plt.semilogy(x,y,',')
-            plt.ylim([10**-8,2.5])
+            y = np.abs(fields[n])#[0:50]
+            plt.semilogy(x,y,'.',markersize = .5)
+            #plt.ylim([-1,2.5])
             plt.xlim([0,self.r[-1]])
             #plt.xlabel('$r$')
             #plt.ylabel('$\phi$',rotation = 0)
