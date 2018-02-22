@@ -5,7 +5,7 @@ import matplotlib
 import os
 import tqdm
 import scipy.special as sp
-from pyCE.math import sphere_solid_angle,radial_integrate,radialFT
+from pyCE.math import sphere_solid_angle,radial_integrate,radialFT,radialFT_mat
 
 class oscillon:
     """
@@ -69,6 +69,8 @@ class oscillon:
         self._Ncap  = int(sum(self.r<=radius_cap))
         self._tol   = tol
         self._define_boost_factor(radius_MIB,delta_MIB)
+        self._FTmat,self.k = radialFT_mat(self.r,self.d)
+
 
     def initialize_field(self,field_type = 'gaussian', *params):
         """
@@ -222,7 +224,7 @@ class oscillon:
         return E,dE
 
     def simulate_oscillon(self,fields,
-                            plot_profile = True,
+                            plot_profile = False,
                             plot_energy_density = False,
                             plot_energy_shells = False,
                             saveTag = False,
@@ -294,6 +296,9 @@ class oscillon:
         plt.ylabel('$\\rho r^d$',rotation = 0)
         plt.draw()
         plt.pause(.0000000000001)
+
+    def radialFT(self,y):
+        return np.dot(self._FTmat,y)
 
 def _L2_norm(y1,y2):
     return np.sqrt(np.mean((y1-y2)**2))
