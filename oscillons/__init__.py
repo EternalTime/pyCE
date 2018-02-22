@@ -5,7 +5,7 @@ import matplotlib
 import os
 import tqdm
 import scipy.special as sp
-from pyCE.math import sphere_solid_angle,radial_integrate,radialFT,radialFT_mat
+from pyCE.math import sphere_solid_angle,radial_integrate,radialFT_mat
 
 class oscillon:
     """
@@ -69,7 +69,7 @@ class oscillon:
         self._Ncap  = int(sum(self.r<=radius_cap))
         self._tol   = tol
         self._define_boost_factor(radius_MIB,delta_MIB)
-        self._FTmat,self.k = radialFT_mat(self.r,self.d)
+        self._FTmat,self.k = radialFT_mat(self.d,self.r)
 
 
     def initialize_field(self,field_type = 'gaussian', *params):
