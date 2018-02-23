@@ -46,11 +46,11 @@ class oscillon:
     """
     def __init__(self,asymmetry_factor = 0.,
                     dimension = 3,
-                    N = 1000,
-                    radius_max = 30,
-                    radius_MIB = 29,
+                    N = 1500,
+                    radius_max = 45,
+                    radius_MIB = 44,
                     delta_MIB = .5,
-                    radius_cap = 20,
+                    radius_cap = 42,
                     tol = 10**-8,
                     dissipation = 0.8,
                     courant_factor = .5):
