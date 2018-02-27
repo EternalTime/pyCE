@@ -1,7 +1,7 @@
 import numpy as np
 from pyCE.math import radialFT,sphere_solid_angle,radial_integrate
 
-class critical_bubble:
+class instanton:
     """
     ----------------------------------------------------------------------------
     FUNCTION:
