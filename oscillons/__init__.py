@@ -69,7 +69,12 @@ class oscillon:
         self._Ncap  = int(sum(self.r<=radius_cap))
         self._tol   = tol
         self._define_boost_factor(radius_MIB,delta_MIB)
-        self._FTmat,self.k = radialFT_mat(self.d,self.r)
+        #This tag turns true the first time a fourier transform is called. Then
+        # the fourier matrix is precomputed, which means the first call will
+        # always take a bit longer. Once the fourier matrix exists, fourier
+        # transforms are much quicker ( still O(N^2)... it would be nice to
+        # implement a FFT of O(NlogN)... Max? Michelle?)
+        self._FT_tag = False
 
 
     def initialize_field(self,field_type = 'gaussian', *params):
@@ -298,7 +303,40 @@ class oscillon:
         plt.pause(.0000000000001)
 
     def radialFT(self,y):
-        return np.dot(self._FTmat,y)
+        if self._FT_tag:
+            return np.dot(self._FTmat,y)
+        else:
+            self._FTmat,self.k = radialFT_mat(self.d,self.r)
+            return np.dot(self._FTmat,y)
 
 def _L2_norm(y1,y2):
     return np.sqrt(np.mean((y1-y2)**2))
+
+#fixing things with the oscillon class
+class bubble:
+    """
+    ----------------------------------------------------------------------------
+    FUNCTION:
+    ----------------------------------------------------------------------------
+    INPUT:
+    ----------------------------------------------------------------------------
+    OUTPUT:
+    ----------------------------------------------------------------------------
+    """
+    #Remember d is the number of SPATIAL dimensions
+    def __init__(self,asymmetry_factor,dimension,N):
+        eps     = np.finfo(np.float128).eps
+        self.d  = dimension
+        self.g  = np.float128(asymmetry_factor)
+        self.dr = np.float128(.01)
+        self.dk = self.dr
+        alpha   = np.float128(3/np.sqrt(2)*(1+asymmetry_factor))
+        self.alpha = alpha
+
+        self.__generate_bubble_profile__(alpha,N)
+
+        self.__get_energy_profiles__(alpha)
+
+        self.__get_euclidean_action__()
+
+        self.__get_entropy__()
