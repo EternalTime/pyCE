@@ -95,6 +95,7 @@ class oscillon:
         elif field_type == 'tanh':
             print('not yet available')
             return 0
+        elif field_type ==
         else:
             print('field_type not understood')
             return 0
@@ -306,6 +307,7 @@ class oscillon:
         if self._FT_tag:
             return np.dot(self._FTmat,y)
         else:
+            self._FT_tag = True
             self._FTmat,self.k = radialFT_mat(self.d,self.r)
             return np.dot(self._FTmat,y)
 
