@@ -95,7 +95,7 @@ class oscillon:
         elif field_type == 'tanh':
             print('not yet available')
             return 0
-        elif field_type ==
+        #elif field_type ==
         else:
             print('field_type not understood')
             return 0
