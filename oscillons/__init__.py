@@ -309,7 +309,7 @@ class oscillon:
         else:
             self._FT_tag = True
             self._FTmat,self.k = radialFT_mat(self.d,self.r[1:self._Ncap])
-            return np.dot(self._FTmat,y)
+            return np.dot(self._FTmat,y[1:self._Ncap])
 
 def _L2_norm(y1,y2):
     return np.sqrt(np.mean((y1-y2)**2))
