@@ -5,7 +5,8 @@ Configurational Entropy in Python
 Introduction
 ^^^^^^^^^^^^
 
-Welcome to pyCE, a python library for configurational entropy projects.:
+Welcome to pyCE, a python library for configurational entropy projects.
+This library is being developed based on the work being done in Marcelo Gleiser's Research Group in the Department of Physics and Astronomy at Dartmouth College. 
 
 Test here::
 
@@ -19,9 +20,7 @@ Guide
 .. toctree::
    :maxdepth: 2
    
-   Modules
-   Lalala
-
+   license
 
 
 Indices and tables
