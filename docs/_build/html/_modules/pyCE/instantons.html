@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyCE.instantons &mdash; pyCE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pyCE  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyCE
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html#contact">Contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyCE</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyCE.instantons</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyCE.instantons</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pyCE.math</span> <span class="k">import</span> <span class="n">radialFT</span><span class="p">,</span><span class="n">sphere_solid_angle</span><span class="p">,</span><span class="n">radial_integrate</span>
+
+<div class="viewcode-block" id="instanton"><a class="viewcode-back" href="../../source/pyCE.instantons.html#pyCE.instantons.instanton">[docs]</a><span class="k">class</span> <span class="nc">instanton</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Remember d is the number of SPATIAL dimensions</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">asymmetry_factor</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">eps</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span>  <span class="o">=</span> <span class="n">dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="n">asymmetry_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="o">.</span><span class="mi">01</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span>
+        <span class="n">alpha</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">asymmetry_factor</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__generate_bubble_profile__</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_energy_profiles__</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_euclidean_action__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_entropy__</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">__generate_bubble_profile__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="c1">#Set up the bounds for the shooting method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">((</span><span class="n">alpha</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mf">4.</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">((</span><span class="mf">2.</span><span class="o">*</span><span class="n">alpha</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mf">18.</span><span class="p">))</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__shootFor__</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_energy_profiles__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PEdens</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">alpha</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">+</span> <span class="o">.</span><span class="mi">25</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">**</span><span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GEdens</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">DB</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PE</span>     <span class="o">=</span> <span class="n">radial_integrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">PEdens</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GE</span>     <span class="o">=</span> <span class="n">radial_integrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GEdens</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PEdens</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GEdens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PE</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">GE</span>
+
+    <span class="k">def</span> <span class="nf">__get_euclidean_action__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Se</span> <span class="o">=</span> <span class="n">radial_integrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_entropy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">denFT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">radialFT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">f</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">denFT</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf</span> <span class="o">=</span> <span class="n">f</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sc</span> <span class="o">=</span> <span class="o">-</span><span class="n">radial_integrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">mf</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__shootFor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+        <span class="n">isnotnan</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span><span class="ow">not</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">deltaB</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B0</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bmin</span> <span class="o">+</span> <span class="n">deltaB</span><span class="p">)</span>
+        <span class="n">increment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+        <span class="n">lastB</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">isnotnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">breakTag</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">lastB</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">1e-18</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__RK4__</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">lastBnew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">isnotnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1">#print(self.B0,lastBnew)</span>
+            <span class="k">if</span> <span class="n">lastBnew</span> <span class="o">==</span> <span class="n">lastB</span><span class="p">:</span>
+                <span class="n">breakTag</span> <span class="o">=</span> <span class="n">breakTag</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">breakTag</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">breakTag</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">lastB</span>     <span class="o">=</span> <span class="n">lastBnew</span>
+            <span class="n">increment</span> <span class="o">=</span> <span class="n">increment</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">B0</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">lastB</span><span class="p">))</span><span class="o">*</span><span class="n">deltaB</span><span class="o">*</span><span class="n">increment</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">x</span><span class="o">&amp;</span><span class="n">y</span><span class="p">,</span><span class="n">isnotnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">)),</span><span class="n">isnotnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">DB</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DB</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">DB</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">__RK4__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+        <span class="n">n</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">B1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">b1</span><span class="p">:</span> <span class="n">b1</span>
+        <span class="n">B2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">b1</span><span class="p">:</span> <span class="o">-</span><span class="n">d</span><span class="o">*</span><span class="n">b1</span><span class="o">/</span><span class="n">r</span> <span class="o">+</span> <span class="n">b</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mi">3</span>
+        <span class="n">B</span>  <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">]</span>
+        <span class="n">DB</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">]</span>
+        <span class="n">r</span>  <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">n</span>   <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+				<span class="n">k31</span> <span class="o">=</span> <span class="n">B1</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">k41</span> <span class="o">=</span> <span class="n">B2</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+				<span class="n">k32</span> <span class="o">=</span> <span class="n">B1</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k31</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k41</span><span class="p">)</span>
+				<span class="n">k42</span> <span class="o">=</span> <span class="n">B2</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k31</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k41</span><span class="p">)</span>
+
+				<span class="n">k33</span> <span class="o">=</span> <span class="n">B1</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k32</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k42</span><span class="p">)</span>
+				<span class="n">k43</span> <span class="o">=</span> <span class="n">B2</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k32</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k42</span><span class="p">)</span>
+
+				<span class="n">k34</span> <span class="o">=</span> <span class="n">B1</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k33</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k43</span><span class="p">)</span>
+				<span class="n">k44</span> <span class="o">=</span> <span class="n">B2</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k33</span><span class="p">,</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">*</span><span class="n">k43</span><span class="p">)</span>
+
+				<span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">)</span>
+				<span class="n">B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">/</span><span class="mf">6.</span><span class="o">*</span><span class="p">(</span><span class="n">k31</span><span class="o">+</span><span class="mf">2.</span><span class="o">*</span><span class="n">k32</span><span class="o">+</span><span class="mf">2.</span><span class="o">*</span><span class="n">k33</span><span class="o">+</span><span class="n">k34</span><span class="p">))</span>
+				<span class="n">DB</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DB</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">/</span><span class="mf">6.</span><span class="o">*</span><span class="p">(</span><span class="n">k41</span><span class="o">+</span><span class="mf">2.</span><span class="o">*</span><span class="n">k42</span><span class="o">+</span><span class="mf">2.</span><span class="o">*</span><span class="n">k43</span><span class="o">+</span><span class="n">k44</span><span class="p">))</span>
+			<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+				<span class="nb">print</span> <span class="s2">&quot;Overflow occured at n = &quot;</span><span class="p">,</span> <span class="n">n</span>
+				<span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">DB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Damian Sowinski.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

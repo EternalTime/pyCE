@@ -1,17 +1,33 @@
-Configurational Entropy in Python
-=================================
-
+pyCE
+====
 
 Introduction
 ^^^^^^^^^^^^
 
 Welcome to pyCE, a python library for configurational entropy projects.
-This library is being developed based on the work being done in Marcelo Gleiser's Research Group in the Department of Physics and Astronomy at Dartmouth College. 
+This library is being developed based on the work done in Marcelo Gleiser's Research Group in the `Department of Physics and Astronomy`_ at `Dartmouth College`_.
 
 Test here::
 
     print 'hello'
     >> hello
+
+:Hello: This field has a short field name, so aligning the field
+        body with the first line is feasible.
+
+This is a top-level paragraph.
+
+    This paragraph belongs to a first-level block quote.
+
+        This paragraph belongs to a second-level block quote.
+
+what
+    Definition lists associate a term with a definition.
+
+how
+    The term is a one-line phrase, and the definition is one
+    or more paragraphs or body elements, indented relative to
+    the term.
 
 
 Guide
@@ -19,9 +35,8 @@ Guide
 
 .. toctree::
    :maxdepth: 2
-   
-   license
 
+   license
 
 Indices and tables
 ==================
@@ -29,3 +44,6 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. _Department of Physics and Astronomy: https://physics.dartmouth.edu/
+.. _Dartmouth College: https://home.dartmouth.edu/

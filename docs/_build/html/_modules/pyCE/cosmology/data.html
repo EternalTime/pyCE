@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyCE.cosmology.data &mdash; pyCE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pyCE  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyCE
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html#contact">Contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyCE</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyCE.cosmology.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyCE.cosmology.data</h1><div class="highlight"><pre>
+<span></span><span class="c1">#--------------------------------------------------------------------- LIBRARIES</span>
+
+<span class="kn">import</span> <span class="nn">urllib2</span> <span class="k">as</span> <span class="nn">ul</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
+
+<span class="c1">#--------------------------------------------------------- INITIALIZATION SCRIPT</span>
+
+<span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+<span class="c1">#--------------------------------------------------------------------- FUNCTIONS</span>
+
+<div class="viewcode-block" id="read_power_spectrum"><a class="viewcode-back" href="../../../source/pyCE.cosmology.data.html#pyCE.cosmology.data.read_power_spectrum">[docs]</a><span class="k">def</span> <span class="nf">read_power_spectrum</span><span class="p">(</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Planck&#39;</span><span class="p">,</span> <span class="n">ps</span> <span class="o">=</span> <span class="s1">&#39;TT&#39;</span><span class="p">,</span> <span class="n">psType</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:       dic = read_power_spectrum([telescope, ps, psType])</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:          telescope (string: Planck or WMAP)</span>
+<span class="sd">                    ps        (string: TT, TE, TM, or EM)</span>
+<span class="sd">                    psType    (string: data, fit)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:         dic (dictionary, keys: ell, Dl, Cl)</span>
+<span class="sd">                    Outputs a dictionary containing the ell, D_ell, and C_ell</span>
+<span class="sd">                    values coming directly from the data from either Planck</span>
+<span class="sd">                    or WMAP.</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">psType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">telescope</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;Planck&#39;</span><span class="p">,</span><span class="s1">&#39;planck&#39;</span><span class="p">]:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;http://irsa.ipac.caltech.edu/data/Planck/release_2/anci&#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;llary-data/cosmoparams/COM_PowerSpect_CMB_R2.02.fits&#39;</span><span class="p">)</span>
+                <span class="n">hdulist</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ps</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TT&#39;</span><span class="p">,</span><span class="s1">&#39;tt&#39;</span><span class="p">]:</span>
+                    <span class="n">ell</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTLOLUNB&#39;</span><span class="p">]</span><span class="o">.</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTHILUNB&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">0</span><span class="p">)))))</span>
+                    <span class="n">Dl</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTLOLUNB&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTHILUNB&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                    <span class="n">error</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTLOLUNB&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+                        <span class="n">hdulist</span><span class="p">[</span><span class="s1">&#39;TTHILUNB&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">telescope</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WMAP&#39;</span><span class="p">,</span><span class="s1">&#39;wmap&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">ps</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TT&#39;</span><span class="p">,</span><span class="s1">&#39;tt&#39;</span><span class="p">]:</span>
+                    <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span>
+                               <span class="s1">&#39;wmap/wmap_tt_spectrum_9yr_v5.txt&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+                    <span class="n">myFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">myFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">20</span><span class="p">::]])</span>
+                    <span class="n">ell</span><span class="p">,</span><span class="n">Dl</span><span class="p">,</span><span class="n">error</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ell&#39;</span><span class="p">:</span><span class="n">ell</span><span class="p">,</span><span class="s1">&#39;Dl&#39;</span><span class="p">:</span><span class="n">Dl</span><span class="p">,</span><span class="s1">&#39;Cl&#39;</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Dl</span><span class="o">/</span><span class="p">(</span><span class="n">ell</span><span class="o">*</span><span class="p">(</span><span class="n">ell</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="n">error</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">psType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;bf&#39;</span><span class="p">,</span><span class="s1">&#39;best&#39;</span><span class="p">,</span><span class="s1">&#39;bestfit&#39;</span><span class="p">,</span><span class="s1">&#39;fit&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">telescope</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;Planck&#39;</span><span class="p">,</span><span class="s1">&#39;planck&#39;</span><span class="p">]:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;http://irsa.ipac.caltech.edu/data/Planck/release_2/&#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;ancillary-data/cosmoparams/COM_PowerSpect_CMB-base-&#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;plikHM-TT-lowTEB-minimum-theory_R2.02.txt&#39;</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">ul</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">::]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">()),</span><span class="n">data</span><span class="p">))</span>
+                <span class="n">ell</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">ps</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TT&#39;</span><span class="p">,</span><span class="s1">&#39;tt&#39;</span><span class="p">]:</span>
+                    <span class="n">Dl</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ell&#39;</span><span class="p">:</span><span class="n">ell</span><span class="p">,</span><span class="s1">&#39;Dl&#39;</span><span class="p">:</span><span class="n">Dl</span><span class="p">,</span><span class="s1">&#39;Cl&#39;</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Dl</span><span class="o">/</span><span class="p">(</span><span class="n">ell</span><span class="o">*</span><span class="p">(</span><span class="n">ell</span><span class="o">+</span><span class="mi">1</span><span class="p">))}</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Something went wrong reading the file&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Damian Sowinski.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -2,6 +2,7 @@ License
 =======
 
 The MIT License (MIT)
+
 (c) 2018 Damian R Sowinski
 
 Permission is hereby granted, free of charge, to any person

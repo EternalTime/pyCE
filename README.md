@@ -1,4 +1,4 @@
 # pyCE
-A library for projects related to Configurational Entropy. Written with python 2.7, so compatibility issues exist for python 3.x.
+A python 2.7 library for projects related to Configurational Entropy.
 
-Please see the Read the Docs for instructions and clarification. 
+Please see the Read the Docs for instructions and clarification.

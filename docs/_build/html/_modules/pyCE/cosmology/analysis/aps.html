@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyCE.cosmology.analysis.aps &mdash; pyCE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="pyCE  documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> pyCE
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html#contact">Contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pyCE</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyCE.cosmology.analysis.aps</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyCE.cosmology.analysis.aps</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">fitting</span>
+
+<span class="c1">#----------------------------------------------------------------------FUNCTIONS</span>
+
+<div class="viewcode-block" id="norm"><a class="viewcode-back" href="../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.norm">[docs]</a><span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:   p = norm(p)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:      p (array)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:     p (array)</span>
+<span class="sd">                Returns an L1-normalized array.</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">p</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="modal_fraction"><a class="viewcode-back" href="../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.modal_fraction">[docs]</a><span class="k">def</span> <span class="nf">modal_fraction</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span><span class="n">Cl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:   mf = modal_fraction(ell,Cl)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:      ell (integer array)</span>
+<span class="sd">                Cl (array)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:     mf (array)</span>
+<span class="sd">                Calculates the modal fraction of an angular power spectrum.</span>
+<span class="sd">                Incorporates the 2*ell+1 Jacobian factor coming from the sum</span>
+<span class="sd">                over all the m&#39;s.</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nCl</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">ell</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span><span class="o">*</span><span class="n">Cl</span>
+    <span class="n">nCl</span><span class="p">[</span><span class="n">nCl</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">norm</span><span class="p">(</span><span class="n">nCl</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KL_divergence"><a class="viewcode-back" href="../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.KL_divergence">[docs]</a><span class="k">def</span> <span class="nf">KL_divergence</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:   kl = KL_divergence(p,q)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:      p (array) a modal fraction</span>
+<span class="sd">                q (array) a modal fraction</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:     kl (positive real number)</span>
+<span class="sd">                Returns the Kullback-Liebler divergence from q to p. Note that</span>
+<span class="sd">                divergence is not symmetric. For more on the information measure</span>
+<span class="sd">                see: add website</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">pq</span> <span class="o">=</span> <span class="n">p</span><span class="o">/</span><span class="n">q</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">pq</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="entropy"><a class="viewcode-back" href="../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.entropy">[docs]</a><span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:   h = entropy(p)</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:      p (array) a modal fraction</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:     h (positive real number)</span>
+<span class="sd">                Returns the Shannon Entropy of the p distribution.</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Damian Sowinski.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

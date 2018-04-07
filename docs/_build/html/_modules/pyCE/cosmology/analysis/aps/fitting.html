@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyCE.cosmology.analysis.aps.fitting &mdash; pyCE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../../search.html"/>
+    <link rel="top" title="pyCE  documentation" href="../../../../../index.html"/>
+        <link rel="up" title="pyCE.cosmology.analysis.aps" href="../aps.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> pyCE
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html#contact">Contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">pyCE</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../aps.html">pyCE.cosmology.analysis.aps</a> &raquo;</li>
+        
+      <li>pyCE.cosmology.analysis.aps.fitting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyCE.cosmology.analysis.aps.fitting</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="basis_cos"><a class="viewcode-back" href="../../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.fitting.basis_cos">[docs]</a><span class="k">def</span> <span class="nf">basis_cos</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.4142135623730951</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="basis_leg"><a class="viewcode-back" href="../../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.fitting.basis_leg">[docs]</a><span class="k">def</span> <span class="nf">basis_leg</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">j</span><span class="o">+</span><span class="mf">1.</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">legendre</span><span class="o">.</span><span class="n">Legendre</span><span class="p">(</span><span class="n">J</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="npf_makeU"><a class="viewcode-back" href="../../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.fitting.npf_makeU">[docs]</a><span class="k">def</span> <span class="nf">npf_makeU</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">basis</span><span class="p">):</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">U</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">U</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="nonparametric_fit"><a class="viewcode-back" href="../../../../../source/pyCE.cosmology.analysis.aps.html#pyCE.cosmology.analysis.aps.fitting.nonparametric_fit">[docs]</a><span class="k">def</span> <span class="nf">nonparametric_fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">error</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">lType</span> <span class="o">=</span> <span class="s1">&#39;NSS&#39;</span><span class="p">,</span><span class="n">JRange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:       dic = nonparametric_fit(data, error, basis,[lType, JRange])</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:          data    (array)</span>
+<span class="sd">                    error   (array)</span>
+<span class="sd">                    U       (array) Orthogonal basis matrix</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:         dic     (dictionary, keys: nbf, Risk, EDoF)</span>
+<span class="sd">                    Outputs a dictionary containing the nonparametric best fit</span>
+<span class="sd">                    (nbf) of the data with respect to the basis. Also returns</span>
+<span class="sd">                    the risk function (Risk) and the effective degrees of</span>
+<span class="sd">                    freedom (EDoF). The algorithm follows 1107.0516v2.</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">minJ</span> <span class="o">=</span> <span class="n">JRange</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">maxJ</span> <span class="o">=</span> <span class="n">JRange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1">#initialize inverse variance</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">N</span> <span class="c1">#this should actually be the covariance matrix, but</span>
+    <span class="c1"># until we get that we&#39;ll settle for just the variance and leave the off-</span>
+    <span class="c1"># diagonal terms = 0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">N</span><span class="p">)</span>
+    <span class="c1">#Use the U matrix in a few places to make the B, W, and Z matrices</span>
+    <span class="c1"># (see the paper if this is confusing)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">U</span><span class="p">),</span><span class="n">B</span><span class="p">),</span><span class="n">U</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">U</span><span class="p">),</span><span class="n">Y</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">U</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">E</span><span class="p">,</span><span class="n">U</span><span class="p">))</span>
+
+    <span class="c1"># implements the Nested Subset Selection choice for shrinkage</span>
+    <span class="c1"># TODO: implement some other shrinkage choices (exponential?)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">---------------- Calculating Risk ---------------&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;NSS&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shrinkage Method:         Nested Subset Selection</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">myD</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">j</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">j</span><span class="o">+</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">j</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">lType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Fractional&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shrinkage Method:         Fractional Monotone Shrinkage</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">myD</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">j</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="mi">2</span><span class="o">**-</span><span class="n">x</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">)))</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">maxJ</span><span class="o">-</span><span class="n">minJ</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">EDoF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">minJ</span><span class="p">,</span><span class="n">maxJ</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">myD</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        <span class="n">Db</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">-</span><span class="n">D</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span><span class="n">Db</span><span class="p">),</span><span class="n">W</span><span class="p">),</span><span class="n">Db</span><span class="p">),</span><span class="n">Z</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">W</span><span class="p">),</span><span class="n">D</span><span class="p">),</span><span class="n">B</span><span class="p">)),</span>
+                <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Db</span><span class="p">,</span><span class="n">W</span><span class="p">),</span><span class="n">Db</span><span class="p">),</span><span class="n">B</span><span class="p">))]</span>
+        <span class="n">R</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">minJ</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+        <span class="n">EDoF</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">minJ</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="c1">#sum(np.diagonal(D))</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">::]))</span><span class="o">+</span><span class="n">minJ</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">NPfit optimized at J = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">J</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;nbf&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,([</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">J</span><span class="o">+</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">J</span><span class="p">))</span><span class="o">*</span><span class="n">Z</span><span class="p">),</span><span class="s1">&#39;Risk&#39;</span><span class="p">:</span><span class="n">R</span><span class="p">,</span><span class="s1">&#39;EDoF&#39;</span><span class="p">:</span><span class="n">EDoF</span><span class="p">}</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Damian Sowinski.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

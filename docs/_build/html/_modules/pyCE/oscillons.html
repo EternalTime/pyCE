@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyCE.oscillons &mdash; pyCE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pyCE  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyCE
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html#contact">Contact</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyCE</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyCE.oscillons</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyCE.oscillons</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">scipy.special</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">from</span> <span class="nn">pyCE.math</span> <span class="k">import</span> <span class="n">sphere_solid_angle</span><span class="p">,</span><span class="n">radial_integrate</span><span class="p">,</span><span class="n">radialFT_mat</span>
+
+<div class="viewcode-block" id="oscillon"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon">[docs]</a><span class="k">class</span> <span class="nc">oscillon</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Oscillon environment class</span>
+
+<span class="sd">    Creates an environment in which to simulate an oscillon. Sets up the lattice</span>
+<span class="sd">    with an MIB coordinate system. Set&#39;s up the potential, using the Kolb and</span>
+<span class="sd">    Turner parametrization.</span>
+
+<span class="sd">    First create an environment::</span>
+
+<span class="sd">      osc_env = oscillon(KWARGS)</span>
+
+<span class="sd">    Then initialize a field::</span>
+
+<span class="sd">      fields = osc_env.initialize_field(KWARGS)</span>
+
+<span class="sd">    Run the simulation::</span>
+
+<span class="sd">      osc_env.simulate_oscillon(fields,KWARGS)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    asymmetry_factor :   float, K&amp;T dimensionless potential, epsilon,  DEFAULT: 0</span>
+<span class="sd">    dimension :          int, number of SPATIAL dimensions,          DEFAULT: 3</span>
+<span class="sd">    N :                  int, size of spatial lattice,               DEFAULT: 1500</span>
+<span class="sd">    radius_max :         float, maximum radius of spatial lattice    DEFAULT: 30</span>
+<span class="sd">    radius_MIB :         float, radius at which coordinates get boosted DEFAULT: 29</span>
+<span class="sd">    delta_MIB :          float, width of boost region                DEFAULT: .5</span>
+<span class="sd">    radius_cap :         float, set boundary of oscillon             DEFAULT: 20</span>
+<span class="sd">    tol :                float, tolerance of iterative scheme in timestep DEFAULT: :math:`10^{-8}`</span>
+<span class="sd">    dissipation :        float, strength of dissipation              DEFAULT: 1.0</span>
+<span class="sd">    courant_factor :     float, ratio of :math:`dt/dx`               DEFAULT: 0.5</span>
+
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+
+<span class="sd">    E :     Energy history of the oscillon</span>
+<span class="sd">    core :  Core value history</span>
+<span class="sd">    time :  Array of time values for energy/core histories</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The value of :math:`\omega` is larger than 5.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">asymmetry_factor</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
+                    <span class="n">dimension</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                    <span class="n">N</span> <span class="o">=</span> <span class="mi">1500</span><span class="p">,</span>
+                    <span class="n">radius_max</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span>
+                    <span class="n">radius_MIB</span> <span class="o">=</span> <span class="mi">44</span><span class="p">,</span>
+                    <span class="n">delta_MIB</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">radius_cap</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+                    <span class="n">tol</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">8</span><span class="p">,</span>
+                    <span class="n">dissipation</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">courant_factor</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span>      <span class="o">=</span> <span class="n">dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span>      <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>  <span class="o">=</span> <span class="mf">3.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">asymmetry_factor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">radius_max</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>     <span class="o">=</span> <span class="n">courant_factor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_courant_factor</span> <span class="o">=</span> <span class="n">courant_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dissipation_factor</span> <span class="o">=</span> <span class="n">dissipation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rmax</span>  <span class="o">=</span> <span class="n">radius_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rcap</span>  <span class="o">=</span> <span class="n">radius_cap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">&lt;=</span><span class="n">radius_cap</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span>   <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_define_boost_factor</span><span class="p">(</span><span class="n">radius_MIB</span><span class="p">,</span><span class="n">delta_MIB</span><span class="p">)</span>
+        <span class="c1">#This tag turns true the first time a fourier transform is called. Then</span>
+        <span class="c1"># the fourier matrix is precomputed, which means the first call will</span>
+        <span class="c1"># always take a bit longer. Once the fourier matrix exists, fourier</span>
+        <span class="c1"># transforms are much quicker ( still O(N^2)... it would be nice to</span>
+        <span class="c1"># implement a FFT of O(NlogN)... Max? Michelle?)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_FT_tag</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="oscillon.initialize_field"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon.initialize_field">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">field_type</span> <span class="o">=</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        --------------------------------------------------------------------</span>
+<span class="sd">        Field types supported:</span>
+
+<span class="sd">        gaussian    - use a single parameter to describe the radius of the</span>
+<span class="sd">                    gaussian. Note the radius = Sqrt(2)*sigma</span>
+<span class="sd">        --------------------------------------------------------------------</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span>
+            <span class="n">r0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">A</span>  <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">4</span><span class="p">))</span>
+            <span class="n">f0</span> <span class="o">=</span> <span class="n">A</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">/</span><span class="n">r0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">f1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">/</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">f0</span>
+            <span class="n">f2</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">*</span><span class="n">f1</span>
+        <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s1">&#39;tanh&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;not yet available&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="c1">#elif field_type ==</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;field_type not understood&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_define_boost_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">radius_MIB</span><span class="p">,</span><span class="n">delta_MIB</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">-</span> <span class="n">radius_MIB</span><span class="p">)</span><span class="o">/</span><span class="n">delta_MIB</span>
+        <span class="n">boost</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">boost</span> <span class="o">=</span> <span class="n">boost</span> <span class="o">-</span> <span class="n">boost</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">d_boost</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">/</span><span class="p">(</span><span class="n">delta_MIB</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_f</span> <span class="o">=</span> <span class="n">boost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">d_boost</span>
+
+    <span class="k">def</span> <span class="nf">_potential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">phi</span><span class="p">):</span>
+        <span class="n">phi2</span> <span class="o">=</span> <span class="n">phi</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">phi3</span> <span class="o">=</span> <span class="n">phi2</span><span class="o">*</span><span class="n">phi</span>
+        <span class="n">phi4</span> <span class="o">=</span> <span class="n">phi2</span><span class="o">*</span><span class="n">phi2</span>
+        <span class="k">return</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">phi2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">phi3</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="o">.</span><span class="mi">25</span><span class="o">*</span><span class="n">phi4</span>
+
+    <span class="k">def</span> <span class="nf">_gradient_potential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">phi</span><span class="p">):</span>
+        <span class="n">phi2</span> <span class="o">=</span> <span class="n">phi</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">phi3</span> <span class="o">=</span> <span class="n">phi2</span><span class="o">*</span><span class="n">phi</span>
+        <span class="k">return</span> <span class="n">phi</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">phi2</span> <span class="o">+</span> <span class="n">phi3</span>
+
+    <span class="k">def</span> <span class="nf">_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">):</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">fields_old</span>  <span class="o">=</span> <span class="n">fields</span><span class="o">*</span><span class="mf">1.0</span>
+        <span class="n">fields_0</span>    <span class="o">=</span> <span class="n">fields_old</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">(</span><span class="n">fields_old</span><span class="p">)</span>
+                                        <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dissipation</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span>
+        <span class="k">while</span> <span class="n">error</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">:</span>
+            <span class="c1">#iteration step</span>
+            <span class="n">fields_new</span>  <span class="o">=</span> <span class="n">fields_0</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">(</span><span class="n">fields_old</span><span class="p">)</span>
+            <span class="c1">#implementing boundary conditions</span>
+            <span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mi">10</span><span class="o">*</span><span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                                <span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span><span class="o">/</span><span class="mf">5.0</span>
+            <span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">fields_new</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields_new</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields_new</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">fields_new</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields_new</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">error</span>       <span class="o">=</span> <span class="n">_L2_norm</span><span class="p">(</span><span class="n">fields_new</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span>
+                                    <span class="n">fields_old</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">fields_old</span>  <span class="o">=</span> <span class="mf">1.</span><span class="o">*</span><span class="n">fields_new</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestep_update</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fields_new</span>
+
+    <span class="k">def</span> <span class="nf">_simulation_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rt</span>        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rtd</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a</span>         <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-.</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">6</span><span class="p">):</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">11.</span><span class="p">,</span><span class="mf">18.</span><span class="p">,</span><span class="o">-</span><span class="mf">9.</span><span class="p">,</span><span class="mf">2.</span><span class="p">])</span><span class="o">/</span><span class="mf">6.</span><span class="p">,</span>
+                            <span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_timestep_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rt</span>        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rtd</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-.</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">6</span><span class="p">):</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">11.</span><span class="p">,</span><span class="mf">18.</span><span class="p">,</span><span class="o">-</span><span class="mf">9.</span><span class="p">,</span><span class="mf">2.</span><span class="p">])</span><span class="o">/</span><span class="mf">6.</span><span class="p">,</span>
+                            <span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">):</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">dF</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">])</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">f2</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="o">*</span><span class="n">f1</span>
+
+        <span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">],[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-.</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="o">=</span> <span class="o">-</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="c1">#finite difference stencil not converging</span>
+                    <span class="c1">#(3*f0[-5] - 16*f0[-4] + 36*f0[-3]</span>
+                    <span class="c1">#    -48*f0[-2] + 25*f0[-1])/(12*self.dr)</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">48</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">36</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">12</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">)</span>
+                    <span class="c1">#fitting to the origin seems to break the regularity</span>
+                    <span class="c1">#4*dF[1,1] - 6*dF[1,2] + 4*dF[1,3] - dF[1,4]</span>
+                    <span class="c1">#finite difference stencil not converging</span>
+                    <span class="c1">#</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>     <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mi">10</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="n">dF</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span><span class="o">/</span><span class="mf">5.0</span>
+
+        <span class="n">temp</span>        <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="o">*</span><span class="n">f2</span> <span class="o">+</span> <span class="n">f1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_rtd</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">:(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>  <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">temp</span><span class="p">,[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-.</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span><span class="o">/</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_drd</span><span class="p">[</span><span class="mi">1</span><span class="p">:(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="o">=</span> <span class="o">-</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="c1">#finite difference stencil not converging</span>
+                    <span class="c1">#(3*temp[-5] - 16*temp[-4] + 36*temp[-3]</span>
+                    <span class="c1">#    -48*temp[-2] + 25*temp[-1])/(12*self._drd[-1])</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gradient_potential</span><span class="p">(</span><span class="n">f0</span><span class="p">))</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>    <span class="o">=</span> <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">f2</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">6</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="o">=</span> <span class="o">-</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">dF</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">dF</span>
+
+    <span class="k">def</span> <span class="nf">_dissipation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">):</span>
+        <span class="n">dF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">f</span><span class="p">,[</span><span class="mf">1.</span><span class="p">,</span><span class="o">-</span><span class="mf">4.</span><span class="p">,</span><span class="mf">6.</span><span class="p">,</span><span class="o">-</span><span class="mf">4.</span><span class="p">,</span><span class="mf">1.</span><span class="p">],</span><span class="s1">&#39;same&#39;</span><span class="p">),</span>
+                            <span class="n">fields</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dr</span>
+        <span class="n">dF</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">0</span><span class="c1">#(35*fields[:,0:1] - 186*fields[:,1:2] + 411*fields[:,2:3]</span>
+                    <span class="c1">#    - 484*fields[:,3:4] + 321*fields[:,4:5]</span>
+                    <span class="c1">#    - 114*fields[:,5:6] + 17*fields[:,6:7])/6.0</span>
+        <span class="n">dF</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">0</span><span class="c1">#(17*fields[:,0:1] - 84*fields[:,1:2] + 171*fields[:,2:3]</span>
+                    <span class="c1">#    - 184*fields[:,3:4] + 11*fields[:,4:5]</span>
+                    <span class="c1">#    - 36*fields[:,5:6]  + 5*fields[:,6:7])/6.0</span>
+        <span class="n">dF</span><span class="p">[:,</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">#(5*fields[:,-7:-6] - 36*fields[:,-6:-5] + 111*fields[:,-5:-4]</span>
+                    <span class="c1">#    - 184*fields[:,-4:-3] + 171*fields[:,-3:-2]</span>
+                    <span class="c1">#    - 84*fields[:,-2:-1] + 17*fields[:,-1:])/6.0</span>
+        <span class="n">dF</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>   <span class="o">=</span> <span class="mi">0</span><span class="c1"># (17*fields[:,-7:-6] - 114*fields[:,-6:-5] + 321*fields[:,-5:-4]</span>
+                    <span class="c1">#    - 484*fields[:,-4:-3] + 411*fields[:,-3:-2]</span>
+                    <span class="c1">#    - 186*fields[:,-2:-1] + 35*fields[:,-1:])/6.0</span>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_dissipation_factor</span><span class="o">*</span><span class="n">dF</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_courant_factor</span><span class="o">**</span><span class="mi">4</span>
+
+<div class="viewcode-block" id="oscillon.stress_energy_tensor"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon.stress_energy_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">stress_energy_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">):</span>
+        <span class="n">V</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potential</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">V</span>
+        <span class="n">j</span>   <span class="o">=</span> <span class="o">-</span><span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="o">*</span><span class="n">rho</span>
+        <span class="n">P</span>   <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rho</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">V</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="o">*</span><span class="n">j</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rho</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">P</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="oscillon.energy"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon.energy">[docs]</a>    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">radial_integrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">],</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">dE</span> <span class="o">=</span> <span class="p">(</span><span class="n">sphere_solid_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_rt</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span>
+                <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E</span><span class="p">,</span><span class="n">dE</span></div>
+
+<div class="viewcode-block" id="oscillon.simulate_oscillon"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon.simulate_oscillon">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_oscillon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">,</span>
+                            <span class="n">plot_profile</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">plot_energy_density</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">plot_energy_shells</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">saveTag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">num_E_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_start</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">SET</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stress_energy_tensor</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">E0</span><span class="p">,</span><span class="n">dE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="n">SET</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">*</span><span class="n">E0</span>
+        <span class="n">energy_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">E0</span><span class="p">]</span>
+        <span class="n">core</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">E</span> <span class="o">&gt;</span> <span class="o">.</span><span class="mi">01</span><span class="o">*</span><span class="n">E0</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestep</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">num_E_steps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">SET</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stress_energy_tensor</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+                <span class="n">E</span><span class="p">,</span><span class="n">dE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="n">SET</span><span class="p">)</span>
+                <span class="n">energy_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+                <span class="n">core</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">num_E_steps</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_profile</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_plot_profile</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_energy_density</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_plot_energy_density</span><span class="p">(</span><span class="n">SET</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_energy_shells</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_plot_energy_shells</span><span class="p">(</span><span class="n">SET</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">energy_history</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">core</span></div>
+
+    <span class="k">def</span> <span class="nf">_plot_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fields</span><span class="p">,</span><span class="n">num_fields</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="c1">#[0:50]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_fields</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">num_fields</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="c1">#[0:50]</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">markersize</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+            <span class="c1">#plt.ylim([-1,2.5])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="c1">#plt.xlabel(&#39;$r$&#39;)</span>
+            <span class="c1">#plt.ylabel(&#39;$\phi$&#39;,rotation = 0)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="o">.</span><span class="mi">0000000000001</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_plot_energy_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">10</span><span class="o">**-</span><span class="mi">12</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$r$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">rho$&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="o">.</span><span class="mi">0000000000001</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_plot_energy_shells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_rtd</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">10</span><span class="o">**-</span><span class="mi">20</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$r$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">rho r^d$&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="o">.</span><span class="mi">0000000000001</span><span class="p">)</span>
+
+<div class="viewcode-block" id="oscillon.radialFT"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.oscillon.radialFT">[docs]</a>    <span class="k">def</span> <span class="nf">radialFT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_FT_tag</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FTmat</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_FT_tag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_FTmat</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">radialFT_mat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FTmat</span><span class="p">,</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_Ncap</span><span class="p">])</span></div></div>
+
+<span class="k">def</span> <span class="nf">_L2_norm</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y1</span><span class="o">-</span><span class="n">y2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">#fixing things with the oscillon class</span>
+<div class="viewcode-block" id="bubble"><a class="viewcode-back" href="../../source/pyCE.oscillons.html#pyCE.oscillons.bubble">[docs]</a><span class="k">class</span> <span class="nc">bubble</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    FUNCTION:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    INPUT:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    OUTPUT:</span>
+<span class="sd">    ----------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Remember d is the number of SPATIAL dimensions</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">asymmetry_factor</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">eps</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span>  <span class="o">=</span> <span class="n">dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="n">asymmetry_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="o">.</span><span class="mi">01</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span>
+        <span class="n">alpha</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">asymmetry_factor</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__generate_bubble_profile__</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_energy_profiles__</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_euclidean_action__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_entropy__</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Damian Sowinski.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
