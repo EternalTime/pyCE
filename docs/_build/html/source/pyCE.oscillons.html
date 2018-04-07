@@ -25,24 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pyCE  documentation" href="../index.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -98,7 +91,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyCE</a>
@@ -106,9 +99,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -152,16 +146,99 @@
             
   <div class="section" id="pyce-oscillons-package">
 <h1>pyCE.oscillons package<a class="headerlink" href="#pyce-oscillons-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.oscillons">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyCE.oscillons" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyCE.oscillons.bubble">
+<em class="property">class </em><code class="descclassname">pyCE.oscillons.</code><code class="descname">bubble</code><span class="sig-paren">(</span><em>asymmetry_factor</em>, <em>dimension</em>, <em>N</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#bubble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.bubble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="pyCE.oscillons.oscillon">
+<em class="property">class </em><code class="descclassname">pyCE.oscillons.</code><code class="descname">oscillon</code><span class="sig-paren">(</span><em>asymmetry_factor=0.0</em>, <em>dimension=3</em>, <em>N=1500</em>, <em>radius_max=45</em>, <em>radius_MIB=44</em>, <em>delta_MIB=0.5</em>, <em>radius_cap=42</em>, <em>tol=1e-08</em>, <em>dissipation=0.8</em>, <em>courant_factor=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Oscillon environment class</p>
+<p>Creates an environment in which to simulate an oscillon. Sets up the lattice
+with an MIB coordinate system. Set’s up the potential, using the Kolb and
+Turner parametrization.</p>
+<p>First create an environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">osc_env</span> <span class="o">=</span> <span class="n">oscillon</span><span class="p">(</span><span class="n">KWARGS</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then initialize a field:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="n">osc_env</span><span class="o">.</span><span class="n">initialize_field</span><span class="p">(</span><span class="n">KWARGS</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run the simulation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">osc_env</span><span class="o">.</span><span class="n">simulate_oscillon</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span><span class="n">KWARGS</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>asymmetry_factor</strong> (<em>float, K&amp;T dimensionless potential, epsilon,  DEFAULT: 0</em>)</li>
+<li><strong>dimension</strong> (<em>int, number of SPATIAL dimensions,          DEFAULT: 3</em>)</li>
+<li><strong>N</strong> (<em>int, size of spatial lattice,               DEFAULT: 1500</em>)</li>
+<li><strong>radius_max</strong> (<em>float, maximum radius of spatial lattice    DEFAULT: 30</em>)</li>
+<li><strong>radius_MIB</strong> (<em>float, radius at which coordinates get boosted DEFAULT: 29</em>)</li>
+<li><strong>delta_MIB</strong> (<em>float, width of boost region                DEFAULT: .5</em>)</li>
+<li><strong>radius_cap</strong> (<em>float, set boundary of oscillon             DEFAULT: 20</em>)</li>
+<li><strong>tol</strong> (float, tolerance of iterative scheme in timestep DEFAULT: <span class="math">\(10^{-8}\)</span>)</li>
+<li><strong>dissipation</strong> (<em>float, strength of dissipation              DEFAULT: 1.0</em>)</li>
+<li><strong>courant_factor</strong> (float, ratio of <span class="math">\(dt/dx\)</span>               DEFAULT: 0.5)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><ul class="first last simple">
+<li><strong>E</strong> (<em>Energy history of the oscillon</em>)</li>
+<li><strong>core</strong> (<em>Core value history</em>)</li>
+<li><strong>time</strong> (<em>Array of time values for energy/core histories</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The value of <span class="math">\(\omega\)</span> is larger than 5.</p>
+<dl class="method">
+<dt id="pyCE.oscillons.oscillon.energy">
+<code class="descname">energy</code><span class="sig-paren">(</span><em>T</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon.energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon.energy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyCE.oscillons.oscillon.initialize_field">
+<code class="descname">initialize_field</code><span class="sig-paren">(</span><em>field_type='gaussian'</em>, <em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon.initialize_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon.initialize_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field types supported:</p>
+<dl class="docutils">
+<dt>gaussian    - use a single parameter to describe the radius of the</dt>
+<dd>gaussian. Note the radius = Sqrt(2)*sigma</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyCE.oscillons.oscillon.radialFT">
+<code class="descname">radialFT</code><span class="sig-paren">(</span><em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon.radialFT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon.radialFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyCE.oscillons.oscillon.simulate_oscillon">
+<code class="descname">simulate_oscillon</code><span class="sig-paren">(</span><em>fields</em>, <em>plot_profile=False</em>, <em>plot_energy_density=False</em>, <em>plot_energy_shells=False</em>, <em>saveTag=False</em>, <em>num_E_steps=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon.simulate_oscillon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon.simulate_oscillon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyCE.oscillons.oscillon.stress_energy_tensor">
+<code class="descname">stress_energy_tensor</code><span class="sig-paren">(</span><em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/oscillons.html#oscillon.stress_energy_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.oscillons.oscillon.stress_energy_tensor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -174,7 +251,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -193,6 +270,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -211,14 +289,13 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

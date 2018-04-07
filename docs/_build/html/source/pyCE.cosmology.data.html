@@ -25,24 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pyCE  documentation" href="../index.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -98,7 +91,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyCE</a>
@@ -106,9 +99,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -152,16 +146,30 @@
             
   <div class="section" id="pyce-cosmology-data-package">
 <h1>pyCE.cosmology.data package<a class="headerlink" href="#pyce-cosmology-data-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.cosmology.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyCE.cosmology.data" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pyCE.cosmology.data.read_power_spectrum">
+<code class="descclassname">pyCE.cosmology.data.</code><code class="descname">read_power_spectrum</code><span class="sig-paren">(</span><em>telescope='Planck'</em>, <em>ps='TT'</em>, <em>psType='data'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/data.html#read_power_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.data.read_power_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:          telescope (string: Planck or WMAP)</dt>
+<dd>ps        (string: TT, TE, TM, or EM)
+psType    (string: data, fit)</dd>
+</dl>
+<dl class="docutils">
+<dt>OUTPUT:         dic (dictionary, keys: ell, Dl, Cl)</dt>
+<dd>Outputs a dictionary containing the ell, D_ell, and C_ell
+values coming directly from the data from either Planck
+or WMAP.</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -174,7 +182,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -193,6 +201,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -211,14 +220,13 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

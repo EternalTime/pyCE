@@ -25,24 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pyCE  documentation" href="../index.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -98,7 +91,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyCE</a>
@@ -106,9 +99,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -155,19 +149,97 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="pyce-cosmology-analysis-aps-fitting-module">
-<h2>pyCE.cosmology.analysis.aps.fitting module<a class="headerlink" href="#pyce-cosmology-analysis-aps-fitting-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.cosmology.analysis.aps.fitting">
+<span id="pyce-cosmology-analysis-aps-fitting-module"></span><h2>pyCE.cosmology.analysis.aps.fitting module<a class="headerlink" href="#module-pyCE.cosmology.analysis.aps.fitting" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.fitting.basis_cos">
+<code class="descclassname">pyCE.cosmology.analysis.aps.fitting.</code><code class="descname">basis_cos</code><span class="sig-paren">(</span><em>j</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps/fitting.html#basis_cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.fitting.basis_cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.fitting.basis_leg">
+<code class="descclassname">pyCE.cosmology.analysis.aps.fitting.</code><code class="descname">basis_leg</code><span class="sig-paren">(</span><em>j</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps/fitting.html#basis_leg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.fitting.basis_leg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.fitting.nonparametric_fit">
+<code class="descclassname">pyCE.cosmology.analysis.aps.fitting.</code><code class="descname">nonparametric_fit</code><span class="sig-paren">(</span><em>data, error, U, lType='NSS', JRange=[1, 100]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps/fitting.html#nonparametric_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.fitting.nonparametric_fit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:          data    (array)</dt>
+<dd>error   (array)
+U       (array) Orthogonal basis matrix</dd>
+</dl>
+<dl class="docutils">
+<dt>OUTPUT:         dic     (dictionary, keys: nbf, Risk, EDoF)</dt>
+<dd>Outputs a dictionary containing the nonparametric best fit
+(nbf) of the data with respect to the basis. Also returns
+the risk function (Risk) and the effective degrees of
+freedom (EDoF). The algorithm follows 1107.0516v2.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.fitting.npf_makeU">
+<code class="descclassname">pyCE.cosmology.analysis.aps.fitting.</code><code class="descname">npf_makeU</code><span class="sig-paren">(</span><em>x</em>, <em>basis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps/fitting.html#npf_makeU"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.fitting.npf_makeU" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.cosmology.analysis.aps">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyCE.cosmology.analysis.aps" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.KL_divergence">
+<code class="descclassname">pyCE.cosmology.analysis.aps.</code><code class="descname">KL_divergence</code><span class="sig-paren">(</span><em>p</em>, <em>q</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps.html#KL_divergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.KL_divergence" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      p (array) a modal fraction</dt>
+<dd>q (array) a modal fraction</dd>
+</dl>
+<dl class="docutils">
+<dt>OUTPUT:     kl (positive real number)</dt>
+<dd>Returns the Kullback-Liebler divergence from q to p. Note that
+divergence is not symmetric. For more on the information measure
+see: add website</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.entropy">
+<code class="descclassname">pyCE.cosmology.analysis.aps.</code><code class="descname">entropy</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps.html#entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.entropy" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>OUTPUT:     h (positive real number)</dt>
+<dd>Returns the Shannon Entropy of the p distribution.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.modal_fraction">
+<code class="descclassname">pyCE.cosmology.analysis.aps.</code><code class="descname">modal_fraction</code><span class="sig-paren">(</span><em>ell</em>, <em>Cl</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps.html#modal_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.modal_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      ell (integer array)</dt>
+<dd>Cl (array)</dd>
+</dl>
+<dl class="docutils">
+<dt>OUTPUT:     mf (array)</dt>
+<dd>Calculates the modal fraction of an angular power spectrum.
+Incorporates the 2*ell+1 Jacobian factor coming from the sum
+over all the m’s.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.aps.norm">
+<code class="descclassname">pyCE.cosmology.analysis.aps.</code><code class="descname">norm</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/aps.html#norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.aps.norm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>OUTPUT:     p (array)</dt>
+<dd>Returns an L1-normalized array.</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -180,7 +252,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -199,6 +271,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -217,14 +290,13 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

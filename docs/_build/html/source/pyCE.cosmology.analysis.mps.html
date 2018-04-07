@@ -25,24 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pyCE  documentation" href="../index.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -98,7 +91,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyCE</a>
@@ -106,9 +99,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -152,16 +146,88 @@
             
   <div class="section" id="pyce-cosmology-analysis-mps-package">
 <h1>pyCE.cosmology.analysis.mps package<a class="headerlink" href="#pyce-cosmology-analysis-mps-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.cosmology.analysis.mps">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyCE.cosmology.analysis.mps" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.mps.KL_divergence">
+<code class="descclassname">pyCE.cosmology.analysis.mps.</code><code class="descname">KL_divergence</code><span class="sig-paren">(</span><em>x</em>, <em>p</em>, <em>q</em>, <em>xmin=0</em>, <em>xmax=inf</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/mps.html#KL_divergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.mps.KL_divergence" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      x (array)</dt>
+<dd><blockquote class="first">
+<div>p (array) a modal fraction
+q (array) a modal fraction</div></blockquote>
+<dl class="last docutils">
+<dt>[optional arguments]</dt>
+<dd>xmin (positive real number)
+xmax (positive real number)</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns the Kullback-Liebler divergence from q to p. Note that divergence is
+not symmetric. For more on the information measure see:
+add website
+Integration uses the trapezoidal rule implemented in NumPy.
+—————————————————————————-</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.mps.entropy">
+<code class="descclassname">pyCE.cosmology.analysis.mps.</code><code class="descname">entropy</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/mps.html#entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.mps.entropy" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      x (array)</dt>
+<dd>p (array) a modal fraction</dd>
+</dl>
+<p>Calculates the differential entropy of the distribution,integrating using
+the trapezoidal rule implemented in NumPy.
+—————————————————————————-</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.mps.modal_fraction">
+<code class="descclassname">pyCE.cosmology.analysis.mps.</code><code class="descname">modal_fraction</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>d=3</em>, <em>xmax=inf</em>, <em>xmin=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/mps.html#modal_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.mps.modal_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      x (array)</dt>
+<dd><blockquote class="first">
+<div>y (array)</div></blockquote>
+<dl class="last docutils">
+<dt>[optional arguments]</dt>
+<dd>d (positive integer)
+xmax (positive real number)
+xmin (positive real number)</dd>
+</dl>
+</dd>
+</dl>
+<p>Normalizes y over the domain set by xmin and xmax, and returns both the
+valid x and y. Integration is done using the trapezoidal rule implemented
+by numpy.
+—————————————————————————-</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCE.cosmology.analysis.mps.norm">
+<code class="descclassname">pyCE.cosmology.analysis.mps.</code><code class="descname">norm</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>d=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/cosmology/analysis/mps.html#norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.cosmology.analysis.mps.norm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>INPUT:      x (array)</dt>
+<dd><blockquote class="first">
+<div>y (array)</div></blockquote>
+<dl class="last docutils">
+<dt>[optional arguments]</dt>
+<dd>d (positive integer)</dd>
+</dl>
+</dd>
+</dl>
+<p>Integrates y over x with a measure coming from the Jacobian in d dimensions.
+Uses the result to normalize y, and returns it with the Jacobian factor.
+Integration is done using the trapezoidal rule implemented by numpy.
+—————————————————————————-</p>
+</dd></dl>
+
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -174,7 +240,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -193,6 +259,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -211,14 +278,13 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

@@ -4,8 +4,9 @@ pyCE
 Introduction
 ^^^^^^^^^^^^
 
-Welcome to pyCE, a python library for configurational entropy projects.
-This library is being developed based on the work done in Marcelo Gleiser's Research Group in the `Department of Physics and Astronomy`_ at `Dartmouth College`_.
+Welcome to pyCE, a Python2.7 library for configurational entropy projects.
+This library is being developed based on the work done in `Marcelo Gleiser`_'s Research Group in the `Department of Physics and Astronomy`_ at `Dartmouth College`_.
+During development this ReadTheDocs will be regularly updated.
 
 Test here::
 
@@ -47,3 +48,4 @@ Indices and tables
 
 .. _Department of Physics and Astronomy: https://physics.dartmouth.edu/
 .. _Dartmouth College: https://home.dartmouth.edu/
+.. _Marcelo Gleiser: http://marcelogleiser.com/
