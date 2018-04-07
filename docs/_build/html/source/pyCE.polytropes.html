@@ -25,24 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pyCE  documentation" href="../index.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -98,7 +91,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyCE</a>
@@ -106,9 +99,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -152,16 +146,32 @@
             
   <div class="section" id="pyce-polytropes-package">
 <h1>pyCE.polytropes package<a class="headerlink" href="#pyce-polytropes-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyCE.polytropes">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyCE.polytropes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyCE.polytropes.polytrope">
+<em class="property">class </em><code class="descclassname">pyCE.polytropes.</code><code class="descname">polytrope</code><span class="sig-paren">(</span><em>n=1.5</em>, <em>dr=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyCE/polytropes.html#polytrope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCE.polytropes.polytrope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a polytrope with index n, which is related to the adiabatic index
+via gamma = 1 + 1/n. Uses an RK4 method to solve the Lane-Emden equation.</p>
+<dl class="docutils">
+<dt>ASPECTS:</dt>
+<dd><p class="first">theta           – Lane-Emden profile
+rho             – scaled density profile
+pressure        – scaled pressure profile
+r               – radial distance array in scaled lengths
+R               – radius of polytrope (not that polytropes with</p>
+<blockquote class="last">
+<div>n&gt;=5 have infinite radius)</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -174,7 +184,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -193,6 +203,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -211,14 +222,13 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
