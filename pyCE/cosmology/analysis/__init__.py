@@ -1,2 +1,2 @@
-import aps
-import mps
+from . import aps
+from . import mps

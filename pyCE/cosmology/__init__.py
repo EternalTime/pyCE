@@ -1,2 +1,2 @@
-import data
-import analysis
+from . import data
+from . import analysis

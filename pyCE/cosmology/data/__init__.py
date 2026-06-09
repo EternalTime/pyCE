@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------- LIBRARIES
 
-import urllib2 as ul
+from urllib import request as ul
 import numpy as np
 import os
 from astropy.io import fits
@@ -33,8 +33,8 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                       'llary-data/cosmoparams/COM_PowerSpect_CMB_R2.02.fits')
                 hdulist = fits.open(url)
                 if ps in ['TT','tt']:
-                    ell = (np.array(map(float,np.append(hdulist['TTLOLUNB'].
-                        data.field(0),hdulist['TTHILUNB'].data.field(0)))))
+                    ell = (np.append(hdulist['TTLOLUNB'].data.field(0),
+                        hdulist['TTHILUNB'].data.field(0)).astype(float))
                     Dl  = np.append(hdulist['TTLOLUNB'].data.field(1),
                         hdulist['TTHILUNB'].data.field(1))
                     error  = np.append(hdulist['TTLOLUNB'].data.field(2),
@@ -43,11 +43,10 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                 if ps in ['TT','tt']:
                     fileName = os.path.join(directory,
                                'wmap/wmap_tt_spectrum_9yr_v5.txt')
-                    print(fileName)
                     myFile = open(fileName)
                     data = [line for line in myFile.readlines()]
                     data = [line.split() for line in data]
-                    data = np.transpose([map(float,line) for line in data[20::]])
+                    data = np.transpose([[float(v) for v in line] for line in data[20::]])
                     ell,Dl,error = data[0],data[1],data[2]
             return {'ell':ell,'Dl':Dl,'Cl':2*np.pi*Dl/(ell*(ell+1)),'error':error}
         elif psType in ['bf','best','bestfit','fit']:
@@ -55,8 +54,8 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                 url = ('http://irsa.ipac.caltech.edu/data/Planck/release_2/' +
                       'ancillary-data/cosmoparams/COM_PowerSpect_CMB-base-' +
                       'plikHM-TT-lowTEB-minimum-theory_R2.02.txt')
-                data = ul.urlopen(url).readlines()[1::]
-                data = np.array(map(lambda x:map(float,x.split()),data))
+                data = [line.decode() for line in ul.urlopen(url).readlines()[1::]]
+                data = np.array([[float(v) for v in line.split()] for line in data])
                 ell = data[:,0]
                 if ps in ['TT','tt']:
                     Dl = data[:,1]
