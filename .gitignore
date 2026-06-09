@@ -1,8 +1,14 @@
-# Compiled python modules.
-*.pyc
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
 
-# Setuptools distribution folder.
-/dist/
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
 
-# Python egg metadata, regenerated from source files by setuptools.
-/*.egg-info
+# Sphinx
+docs/_build/
+
+# OS
+.DS_Store
