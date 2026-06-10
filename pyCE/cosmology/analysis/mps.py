@@ -28,7 +28,7 @@ def norm(x,y,d = 3):
     ndarray
         y divided by Integral[ y * x**(d-1) dx ].
     """
-    return y/np.trapz(y*x**(d-1),x)
+    return y/np.trapezoid(y*x**(d-1),x)
 
 def modal_fraction(x,y,d = 3,xmax = np.inf,xmin = 0):
     """Modal fraction of a power spectrum over a restricted k-range.
@@ -86,7 +86,7 @@ def KL_divergence(x,p,q,xmin = 0,xmax = np.inf):
     #finds the valid k-modes
     idx = (x>=xmin)&(x<=xmax)&(p>0)&(q>0)
     x,p,q = x[idx],p[idx],q[idx]
-    return np.trapz(p*np.log2(p/q),x)
+    return np.trapezoid(p*np.log2(p/q),x)
 
 def entropy(x,p):
     """Differential Shannon entropy of a modal fraction, in bits.
@@ -103,4 +103,4 @@ def entropy(x,p):
     float
         -Integral[ p * log2(p) dx ].
     """
-    return -np.trapz(p*np.log2(p),x)
+    return -np.trapezoid(p*np.log2(p),x)

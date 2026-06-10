@@ -65,12 +65,12 @@ class instanton:
     """
     #Remember d is the number of SPATIAL dimensions
     def __init__(self,asymmetry_factor,dimension,N):
-        eps     = np.finfo(np.float128).eps
+        eps     = np.finfo(np.longdouble).eps
         self.d  = dimension
-        self.g  = np.float128(asymmetry_factor)
-        self.dr = np.float128(.01)
+        self.g  = np.longdouble(asymmetry_factor)
+        self.dr = np.longdouble(.01)
         self.dk = self.dr
-        alpha   = np.float128(3/np.sqrt(2)*(1+asymmetry_factor))
+        alpha   = np.longdouble(3/np.sqrt(2)*(1+asymmetry_factor))
         self.alpha = alpha
 
         self.__generate_bubble_profile__(alpha,N)
@@ -92,8 +92,8 @@ class instanton:
         B(0) lies between the two.
         """
         #Set up the bounds for the shooting method
-        self.Bmax = np.float128((alpha+np.sqrt(alpha**2-4.))/2.)
-        self.Bmin = np.float128((2.*alpha-np.sqrt(4.*alpha**2-18.))/3.)
+        self.Bmax = np.longdouble((alpha+np.sqrt(alpha**2-4.))/2.)
+        self.Bmin = np.longdouble((2.*alpha-np.sqrt(4.*alpha**2-18.))/3.)
         self.__shootFor__(N,self.d)
 
     def __get_energy_profiles__(self,alpha):
@@ -119,7 +119,7 @@ class instanton:
         self.denFT, self.k = radialFT(self.d,self.rho,self.r)
         f       = np.abs(self.denFT)**2
         self.mf = f/max(f)
-        self.Sc = -radial_integrate(self.k,self.mf*np.log(np.finfo(np.float128).eps+self.mf),self.d)
+        self.Sc = -radial_integrate(self.k,self.mf*np.log(np.finfo(np.longdouble).eps+self.mf),self.d)
 
     def __shootFor__(self,N,d):
         """Bisection shooting for the bounce core value B(0).
@@ -131,14 +131,14 @@ class instanton:
         or the result stops changing (breakTag guards against stagnation at
         machine precision). Finally, keep only the radii where both B and
         -DB are positive and finite (where the log is not NaN), i.e. the
-        monotonically decaying part of the profile, and demote the float128
+        monotonically decaying part of the profile, and demote the long-double
         working arrays to float64.
         """
         isnotnan  = lambda x: ~np.isnan(x)
-        deltaB    = np.float128(.5*(self.Bmax - self.Bmin))
-        self.B0   = np.float128(self.Bmin + deltaB)
-        increment = np.float128(1.0)
-        self.B    = np.array([np.float128(10)])
+        deltaB    = np.longdouble(.5*(self.Bmax - self.Bmin))
+        self.B0   = np.longdouble(self.Bmin + deltaB)
+        increment = np.longdouble(1.0)
+        self.B    = np.array([np.longdouble(10)])
         lastB     = self.B[isnotnan(self.B)][-1]
         breakTag  = 0
         while np.abs(lastB)>1e-18:
@@ -152,9 +152,9 @@ class instanton:
             else:
                 breakTag = 0
             lastB     = lastBnew
-            increment = increment/np.float128(2.)
-            self.B0   = self.B0 + np.float128(np.sign(lastB))*deltaB*increment
-        idx = isnotnan(np.log(self.B)) & isnotnan(np.log(-self.DB+np.finfo(np.float128).eps))
+            increment = increment/np.longdouble(2.)
+            self.B0   = self.B0 + np.longdouble(np.sign(lastB))*deltaB*increment
+        idx = isnotnan(np.log(self.B)) & isnotnan(np.log(-self.DB+np.finfo(np.longdouble).eps))
         self.B     = np.asarray(self.B[idx], dtype=float)
         self.DB    = np.asarray(self.DB[idx], dtype=float)
         self.r     = np.asarray(self.r[idx], dtype=float)
@@ -169,15 +169,15 @@ class instanton:
         with B = B0 and DB = -eps (an infinitesimal inward slope avoids the
         coordinate singularity at the origin). Integration runs for at most
         N steps of size dr; an OverflowError (the shot diverging at
-        float128 range) ends the run early, and the profile collected so
+        long-double range) ends the run early, and the profile collected so
         far is stored in self.B, self.DB, self.r.
         """
         n  = 0
         B1 = lambda r,b,b1: b1
         B2 = lambda r,b,b1: -d*b1/r + b - self.alpha*b**2 + b**3
         B  = [self.B0, self.B0]
-        DB = [-np.finfo(np.float128).eps,-np.finfo(np.float128).eps]
-        r  = [np.finfo(np.float128).eps,self.dr]
+        DB = [-np.finfo(np.longdouble).eps,-np.finfo(np.longdouble).eps]
+        r  = [np.finfo(np.longdouble).eps,self.dr]
         while n < N-2:
             try:
                 n   = n + 1
