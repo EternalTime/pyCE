@@ -1,3 +1,10 @@
+"""Access to CMB angular power spectrum data.
+
+Loads observed angular power spectra either from the bundled WMAP 9-year
+files (in the ``wmap/`` subdirectory of this package) or by downloading the
+Planck release-2 products from IRSA over the network.
+"""
+
 #--------------------------------------------------------------------- LIBRARIES
 
 from urllib import request as ul
@@ -7,24 +14,31 @@ from astropy.io import fits
 
 #--------------------------------------------------------- INITIALIZATION SCRIPT
 
+#absolute path of this package; used to locate the bundled WMAP files
 directory = os.path.dirname(__file__)
 
 #--------------------------------------------------------------------- FUNCTIONS
 
 def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:       dic = read_power_spectrum([telescope, ps, psType])
-    ----------------------------------------------------------------------------
-    INPUT:          telescope (string: Planck or WMAP)
-                    ps        (string: TT, TE, TM, or EM)
-                    psType    (string: data, fit)
-    ----------------------------------------------------------------------------
-    OUTPUT:         dic (dictionary, keys: ell, Dl, Cl)
-                    Outputs a dictionary containing the ell, D_ell, and C_ell
-                    values coming directly from the data from either Planck
-                    or WMAP.
-    ----------------------------------------------------------------------------
+    """Read a CMB angular power spectrum.
+
+    Parameters
+    ----------
+    telescope : str
+        'Planck' (downloaded from IRSA; requires network access) or
+        'WMAP' (9-year data bundled with the package).
+    ps : str
+        Which spectrum to read. Currently only 'TT' is implemented.
+    psType : str
+        'data' for the observed spectrum, or 'fit'/'bestfit' for the
+        Planck best-fit theory spectrum (Planck only).
+
+    Returns
+    -------
+    dict
+        Keys 'ell', 'Dl', 'Cl' (with Cl = 2*pi*Dl/(ell*(ell+1))), and, for
+        psType='data', 'error'. Prints a message and returns None if the
+        read fails.
     """
     try:
         if psType in ['data','Data','D']:
@@ -33,6 +47,7 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                       'llary-data/cosmoparams/COM_PowerSpect_CMB_R2.02.fits')
                 hdulist = fits.open(url)
                 if ps in ['TT','tt']:
+                    #low-ell and high-ell unbinned spectra, concatenated
                     ell = (np.append(hdulist['TTLOLUNB'].data.field(0),
                         hdulist['TTHILUNB'].data.field(0)).astype(float))
                     Dl  = np.append(hdulist['TTLOLUNB'].data.field(1),
@@ -46,6 +61,7 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
                     myFile = open(fileName)
                     data = [line for line in myFile.readlines()]
                     data = [line.split() for line in data]
+                    #skip the 20-line header
                     data = np.transpose([[float(v) for v in line] for line in data[20::]])
                     ell,Dl,error = data[0],data[1],data[2]
             return {'ell':ell,'Dl':Dl,'Cl':2*np.pi*Dl/(ell*(ell+1)),'error':error}

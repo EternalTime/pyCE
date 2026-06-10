@@ -1,13 +1,17 @@
-"""
-MODULES
+"""pyCE: a configurational entropy library.
+
+Configurational entropy (CE) is an information-theoretic measure of the
+spatial complexity of a field configuration, built from the Shannon entropy
+of the normalized power spectrum (the "modal fraction") of the
+configuration.
+
+Modules
 -------
-
-A Configurational Entropy library in Python
-
-cosmology : A module for analysis of the Cosmic Microwave Background
-instantons: A module for generating and analyzing instantons
-polytropes : A module for generating and analyzing polytropic models of stars
-oscillons : A module for generating and analyzing oscillons
+math : radial Fourier transforms and d-dimensional radial integration
+cosmology : analysis of the Cosmic Microwave Background
+instantons : generating and analyzing instantons
+oscillons : generating and analyzing oscillons
+polytropes : generating and analyzing polytropic models of stars
 """
 from . import cosmology
 from . import oscillons

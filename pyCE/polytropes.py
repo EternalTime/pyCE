@@ -1,11 +1,16 @@
+"""Polytropic stellar models via the Lane-Emden equation.
+
+A polytrope is a self-gravitating fluid sphere with equation of state
+P = K * rho**gamma, gamma = 1 + 1/n. In scaled variables the structure is
+governed by the Lane-Emden equation
+
+    theta'' + (2/r) theta' = -theta**n,
+
+with theta(0) = 1 and theta'(0) = 0; the density is rho = theta**n and the
+(first) zero of theta marks the stellar surface.
+"""
+
 import numpy as np
-import pickle
-import matplotlib.pyplot as plt
-import matplotlib
-import os
-import tqdm
-import scipy.special as sp
-from pyCE.math import sphere_solid_angle,radial_integrate,radialFT_mat
 
 
 class polytrope:
@@ -18,16 +23,13 @@ class polytrope:
 
     ----------------------------------------------------------------------------
     KWARGS: n               -- polytropic index                     DEFAULT: 1.5
+            dr              -- radial step size                     DEFAULT: .01
     ----------------------------------------------------------------------------
     ASPECTS:
             theta           -- Lane-Emden profile
+            psi             -- radial derivative of theta
             rho             -- scaled density profile
-            pressure        -- scaled pressure profile
             r               -- radial distance array in scaled lengths
-            R               -- radius of polytrope (not that polytropes with
-                                n>=5 have infinite radius)
-
-
     ----------------------------------------------------------------------------
     """
     def __init__(self,n = 1.5,dr = .01):
@@ -38,6 +40,17 @@ class polytrope:
         self.rho = self.theta**self.n
 
     def __solve_Lane_Emden__(self):
+        """Integrate the Lane-Emden equation outward with classic RK4.
+
+        The second-order equation is split into the first-order system
+        theta' = psi and psi' = -(2/r) psi - theta**n. Initial data sit at
+        r = eps with theta = 1 and psi = -eps (an infinitesimal inward slope
+        avoids the coordinate singularity at the origin). Integration stops
+        once theta drops to 1e-5, i.e. at the stellar surface, or on
+        OverflowError (n >= 5 polytropes have no finite surface). The
+        profile is then truncated to theta > 0 and stored in self.theta,
+        self.psi, self.r.
+        """
         n  = 0
         F1 = lambda r,theta,psi: psi
         F2 = lambda r,theta,psi: -2.0*psi/r - theta**self.n

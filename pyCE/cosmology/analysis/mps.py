@@ -1,44 +1,59 @@
+"""Information-theoretic analysis of matter power spectra.
+
+Continuum (integral) analogues of the discrete measures in
+:mod:`pyCE.cosmology.analysis.aps`: modal fractions, differential Shannon
+entropy, and Kullback-Leibler divergence for power spectra defined on a
+continuous wavenumber grid, with the d-dimensional Jacobian factor x**(d-1)
+included in the measure. All integrals use the trapezoidal rule.
+"""
+
 import numpy as np
 
 #----------------------------------------------------------------------FUNCTIONS
 
 def norm(x,y,d = 3):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   y = norm(x,y,[d])
-    ----------------------------------------------------------------------------
-    INPUT:      x (array)
-                y (array)
-            [optional arguments]
-                d (positive integer)
-    ----------------------------------------------------------------------------
-    OUTPUT:     y (array)
-    ----------------------------------------------------------------------------
-    Integrates y over x with a measure coming from the Jacobian in d dimensions.
-    Uses the result to normalize y, and returns it with the Jacobian factor.
-    Integration is done using the trapezoidal rule implemented by numpy.
-    ----------------------------------------------------------------------------
+    """Normalize y over x with the d-dimensional radial measure.
+
+    Parameters
+    ----------
+    x : ndarray
+        Wavenumber grid.
+    y : ndarray
+        Spectrum sampled on `x`.
+    d : int, optional
+        Number of spatial dimensions (default 3).
+
+    Returns
+    -------
+    ndarray
+        y divided by Integral[ y * x**(d-1) dx ].
     """
     return y/np.trapz(y*x**(d-1),x)
 
 def modal_fraction(x,y,d = 3,xmax = np.inf,xmin = 0):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   x,y = modal_fraction(x,y,[d,xmax,xmin])
-    ----------------------------------------------------------------------------
-    INPUT:      x (array)
-                y (array)
-            [optional arguments]
-                d (positive integer)
-                xmax (positive real number)
-                xmin (positive real number)
-    ----------------------------------------------------------------------------
-    OUTPUT:     x,y (arrays)
-    ----------------------------------------------------------------------------
-    Normalizes y over the domain set by xmin and xmax, and returns both the
-    valid x and y. Integration is done using the trapezoidal rule implemented
-    by numpy.
-    ----------------------------------------------------------------------------
+    """Modal fraction of a power spectrum over a restricted k-range.
+
+    Restricts to the modes with xmin <= x <= xmax and y > 0, normalizes the
+    spectrum there with the d-dimensional measure, and attaches the Jacobian
+    factor x**(d-1) so the result is a probability density in x.
+
+    Parameters
+    ----------
+    x : ndarray
+        Wavenumber grid.
+    y : ndarray
+        Power spectrum sampled on `x`.
+    d : int, optional
+        Number of spatial dimensions (default 3).
+    xmax, xmin : float, optional
+        Bounds of the valid k-range.
+
+    Returns
+    -------
+    x : ndarray
+        The valid wavenumbers.
+    mf : ndarray
+        The modal fraction on those wavenumbers.
     """
     #finds the valid k-modes
     idx = (x>=xmin)&(x<=xmax)&(y>0)
@@ -49,24 +64,24 @@ def modal_fraction(x,y,d = 3,xmax = np.inf,xmin = 0):
     return x,mf*x**(d - 1)
 
 def KL_divergence(x,p,q,xmin = 0,xmax = np.inf):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   kl = KL_divergence(x,p,q,[xmin,xmax])
-    ----------------------------------------------------------------------------
-    INPUT:      x (array)
-                p (array) a modal fraction
-                q (array) a modal fraction
-            [optional arguments]
-                xmin (positive real number)
-                xmax (positive real number)
-    ----------------------------------------------------------------------------
-    OUTPUT:     kl (positive real number)
-    ----------------------------------------------------------------------------
-    Returns the Kullback-Liebler divergence from q to p. Note that divergence is
-    not symmetric. For more on the information measure see:
-    add website
-    Integration uses the trapezoidal rule implemented in NumPy.
-    ----------------------------------------------------------------------------
+    """Kullback-Leibler divergence D(p || q) in bits.
+
+    Note that the divergence is not symmetric in its arguments. Only modes
+    with xmin <= x <= xmax where both p and q are positive contribute.
+
+    Parameters
+    ----------
+    x : ndarray
+        Wavenumber grid.
+    p, q : ndarray
+        Modal fractions sampled on `x`.
+    xmin, xmax : float, optional
+        Bounds of the valid k-range.
+
+    Returns
+    -------
+    float
+        Integral[ p * log2(p/q) dx ] over the valid range.
     """
     #finds the valid k-modes
     idx = (x>=xmin)&(x<=xmax)&(p>0)&(q>0)
@@ -74,17 +89,18 @@ def KL_divergence(x,p,q,xmin = 0,xmax = np.inf):
     return np.trapz(p*np.log2(p/q),x)
 
 def entropy(x,p):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   h = entropy(k,p)
-    ----------------------------------------------------------------------------
-    INPUT:      x (array)
-                p (array) a modal fraction
-    ----------------------------------------------------------------------------
-    OUTPUT:     h (positive real number)
-    ----------------------------------------------------------------------------
-    Calculates the differential entropy of the distribution,integrating using
-    the trapezoidal rule implemented in NumPy.
-    ----------------------------------------------------------------------------
+    """Differential Shannon entropy of a modal fraction, in bits.
+
+    Parameters
+    ----------
+    x : ndarray
+        Wavenumber grid.
+    p : ndarray
+        Modal fraction sampled on `x`.
+
+    Returns
+    -------
+    float
+        -Integral[ p * log2(p) dx ].
     """
     return -np.trapz(p*np.log2(p),x)

@@ -1,15 +1,67 @@
+"""Generation and configurational-entropy analysis of instantons.
+
+Solves for the O(d)-symmetric bounce ("bubble") profile of a real scalar
+field in the asymmetric double-well potential
+
+    V(B) = (1/2) B**2 - (alpha/3) B**3 + (1/4) B**4,
+
+with asymmetry parametrized by alpha = (3/sqrt(2)) * (1 + g). The bounce
+satisfies the Euclidean equation of motion
+
+    B'' + (d/r) B' = V'(B) = B - alpha B**2 + B**3,
+
+with B'(0) = 0 and B -> 0 (the false vacuum) as r -> infinity, and is found
+by a shooting method: bisect on the core value B(0) until the profile decays
+into the false vacuum instead of over- or under-shooting.
+
+From the profile, the class computes the energy densities, the Euclidean
+action, and the configurational entropy of the energy-density power spectrum.
+"""
+
 import numpy as np
-from pyCE.math import radialFT,sphere_solid_angle,radial_integrate
+from pyCE.math import radialFT,radial_integrate
 
 class instanton:
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:
-    ----------------------------------------------------------------------------
-    INPUT:
-    ----------------------------------------------------------------------------
-    OUTPUT:
-    ----------------------------------------------------------------------------
+    """O(d)-symmetric bounce profile and its configurational entropy.
+
+    Instantiation does all the work: it solves for the bounce by shooting,
+    builds the energy profiles, and computes the Euclidean action and the
+    configurational entropy.
+
+    Parameters
+    ----------
+    asymmetry_factor : float
+        Asymmetry g of the potential; alpha = (3/sqrt(2)) * (1 + g).
+        g = 0 corresponds to the degenerate (thin-wall) limit.
+    dimension : int
+        Number of SPATIAL dimensions d.
+    N : int
+        Maximum number of radial integration steps (grid spacing dr = 0.01).
+
+    Attributes
+    ----------
+    r : ndarray
+        Radial grid on which the bounce was accepted.
+    B, DB : ndarray
+        Bounce profile B(r) and its radial derivative B'(r).
+    B0 : float
+        Core value B(0) found by the shooting method.
+    Bmin, Bmax : float
+        Initial bracket for the shooting method.
+    PEdens, GEdens, rho : ndarray
+        Potential, gradient, and total energy densities.
+    PE, GE, E : float
+        Radially integrated potential, gradient, and total energies.
+    Se : float
+        Euclidean action: rho integrated in d+1 dimensions (the O(d+1)
+        bounce interpretation of the static d-dimensional profile).
+    denFT, k : ndarray
+        Radial Fourier transform of rho and its k-grid.
+    mf : ndarray
+        Modal fraction |denFT|**2 / max |denFT|**2.
+    Sc : float
+        Configurational entropy, -Integral[ mf * ln(mf) ] over k-space
+        with the d-dimensional radial measure.
     """
     #Remember d is the number of SPATIAL dimensions
     def __init__(self,asymmetry_factor,dimension,N):
@@ -31,12 +83,21 @@ class instanton:
 
 
     def __generate_bubble_profile__(self,alpha,N):
+        """Bracket the core value and run the shooting method.
+
+        Bmax is the true-vacuum field value (the larger root of V'(B)/B = 0);
+        starting above it overshoots. Bmin is the value where the inverted
+        potential -V has dropped enough that the field cannot escape the
+        false vacuum; starting below it undershoots. The bounce core value
+        B(0) lies between the two.
+        """
         #Set up the bounds for the shooting method
         self.Bmax = np.float128((alpha+np.sqrt(alpha**2-4.))/2.)
         self.Bmin = np.float128((2.*alpha-np.sqrt(4.*alpha**2-18.))/3.)
         self.__shootFor__(N,self.d)
 
     def __get_energy_profiles__(self,alpha):
+        """Compute potential/gradient/total energy densities and energies."""
         self.PEdens = .5*self.B**2 - (alpha*self.B**3)/3.0 + .25*self.B**4
         self.GEdens = .5*self.DB**2
         self.PE     = radial_integrate(self.r,self.PEdens,self.d)
@@ -45,15 +106,34 @@ class instanton:
         self.E      = self.PE+self.GE
 
     def __get_euclidean_action__(self):
+        """Euclidean action: the energy density integrated in d+1 dimensions."""
         self.Se = radial_integrate(self.r,self.rho,self.d+1)
 
     def __get_entropy__(self):
+        """Configurational entropy of the energy-density power spectrum.
+
+        Fourier transforms rho, normalizes the power spectrum by its peak to
+        form the modal fraction mf, and integrates -mf*ln(mf) over k-space.
+        The machine epsilon inside the log regularizes mf = 0 modes.
+        """
         self.denFT, self.k = radialFT(self.d,self.rho,self.r)
         f       = np.abs(self.denFT)**2
         self.mf = f/max(f)
         self.Sc = -radial_integrate(self.k,self.mf*np.log(np.finfo(np.float128).eps+self.mf),self.d)
 
     def __shootFor__(self,N,d):
+        """Bisection shooting for the bounce core value B(0).
+
+        Starting from the midpoint of [Bmin, Bmax], integrate outward with
+        RK4 and inspect the last finite value of B: its sign says whether the
+        shot over- or undershot, and B0 is corrected by a bisection step
+        (deltaB * 2**-iteration). Iterate until the tail decays below 1e-18
+        or the result stops changing (breakTag guards against stagnation at
+        machine precision). Finally, keep only the radii where both B and
+        -DB are positive and finite (where the log is not NaN), i.e. the
+        monotonically decaying part of the profile, and demote the float128
+        working arrays to float64.
+        """
         isnotnan  = lambda x: ~np.isnan(x)
         deltaB    = np.float128(.5*(self.Bmax - self.Bmin))
         self.B0   = np.float128(self.Bmin + deltaB)
@@ -82,6 +162,16 @@ class instanton:
         self.DB[0] = 0.0
 
     def __RK4__(self,N,d):
+        """Integrate the bounce ODE outward from r ~ 0 with classic RK4.
+
+        The second-order equation is split into the first-order system
+        B' = DB and DB' = -(d/r) DB + V'(B). Initial data sit at r = eps
+        with B = B0 and DB = -eps (an infinitesimal inward slope avoids the
+        coordinate singularity at the origin). Integration runs for at most
+        N steps of size dr; an OverflowError (the shot diverging at
+        float128 range) ends the run early, and the profile collected so
+        far is stored in self.B, self.DB, self.r.
+        """
         n  = 0
         B1 = lambda r,b,b1: b1
         B2 = lambda r,b,b1: -d*b1/r + b - self.alpha*b**2 + b**3
