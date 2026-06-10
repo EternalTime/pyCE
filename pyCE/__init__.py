@@ -10,6 +10,7 @@ Modules
 math : radial Fourier transforms and d-dimensional radial integration
 cosmology : analysis of the Cosmic Microwave Background
 instantons : generating and analyzing instantons
+bosonstars : generating and analyzing boson stars
 oscillons : generating and analyzing oscillons
 polytropes : generating and analyzing polytropic models of stars
 """
@@ -21,5 +22,6 @@ def docs():
 from . import cosmology
 from . import oscillons
 from . import instantons
+from . import bosonstars
 from . import polytropes
 from . import math

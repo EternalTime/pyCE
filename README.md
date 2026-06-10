@@ -21,6 +21,7 @@ are installed automatically.
 | `pyCE.math` | Radial Fourier transforms and d-dimensional radial integration |
 | `pyCE.cosmology` | Analysis of the Cosmic Microwave Background (Planck and WMAP angular power spectra; bundled WMAP 9-yr data) |
 | `pyCE.instantons` | Generating and analyzing instantons |
+| `pyCE.bosonstars` | Ground-state boson stars of the Einstein-Klein-Gordon system |
 | `pyCE.oscillons` | Generating and analyzing oscillons |
 | `pyCE.polytropes` | Polytropic models of stars |
 
