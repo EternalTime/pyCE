@@ -13,6 +13,11 @@ instantons : generating and analyzing instantons
 oscillons : generating and analyzing oscillons
 polytropes : generating and analyzing polytropic models of stars
 """
+def docs():
+    """Open the online pyCE documentation in a web browser."""
+    import webbrowser
+    webbrowser.open('https://damiansowinski.com/pyCE/')
+
 from . import cosmology
 from . import oscillons
 from . import instantons
