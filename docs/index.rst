@@ -55,6 +55,40 @@ Reference
    source/modules
    license
 
+References
+^^^^^^^^^^
+
+The configurational entropy program this library serves is developed in the
+following papers; the PDFs are hosted on the author's website.
+
+- D. R. Sowinski, *Complexity and Stability for Epistemic Agents: The
+  Foundations and Phenomenology of Configurational Entropy*, Ph.D. thesis,
+  Dartmouth College (2016).
+- M. Gleiser & D. Sowinski, *Information-entropic stability bound for
+  compact objects: Application to Q-balls and the Chandrasekhar limit of
+  polytropes*,
+  `Phys. Lett. B 727, 272 (2013)
+  <https://damiansowinski.com/assets/docs/papers/Polytropes_Gleiser_2013.pdf>`_.
+- M. Gleiser & D. Sowinski, *Information-entropic signature of the critical
+  point*,
+  `Phys. Lett. B 747, 125 (2015)
+  <https://damiansowinski.com/assets/docs/papers/Critical_Gleiser_2017.pdf>`_.
+- D. Sowinski & M. Gleiser, *Information dynamics at a phase transition*,
+  `J. Stat. Phys. 167, 1221 (2017)
+  <https://damiansowinski.com/assets/docs/papers/PhaseDynamics_Sowinski_2017.pdf>`_.
+- D. Sowinski & M. Gleiser, *Configurational information approach to
+  instantons and false vacuum decay in D-dimensional spacetime*,
+  `Phys. Rev. D 98, 056026 (2018)
+  <https://damiansowinski.com/assets/docs/papers/Instantons_Sowinski_2018.pdf>`_.
+- M. Gleiser, M. Stephens & D. Sowinski, *Configurational entropy as a
+  lifetime predictor and pattern discriminator for oscillons*,
+  `Phys. Rev. D 97, 096007 (2018)
+  <https://damiansowinski.com/assets/docs/papers/Oscillons_Gleiser_2018.pdf>`_.
+- D. R. Sowinski, S. Kelty & G. Ghoshal, *Configurational information
+  measures, phase transitions, and an upper bound on complexity*,
+  `arXiv:2503.02980 (2025)
+  <https://damiansowinski.com/assets/docs/papers/Ising_Sowinski_2025.pdf>`_.
+
 Indices and tables
 ==================
 

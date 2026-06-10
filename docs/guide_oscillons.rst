@@ -60,4 +60,7 @@ Experiment with the initial radius. Not every Gaussian becomes an oscillon —
 too narrow and the field disperses promptly, too wide and the collapse
 overshoots. Map out the basin of attraction for yourself; keeping a record of
 which radii live and which die is exactly the kind of small journal that pays
-off later.
+off later. And once you have a stable of oscillons, compute the
+configurational entropy of their energy densities (``env.radialFT`` is built
+for it): the entropy predicts which configurations live longest — see
+Gleiser, Stephens & Sowinski, *Phys. Rev. D* **97**, 096007 (2018).
