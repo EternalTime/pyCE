@@ -7,6 +7,7 @@ Contents
 .. toctree::
 
     pyCE.cosmology
+    pyCE.bosonstars
     pyCE.instantons
     pyCE.math
     pyCE.oscillons

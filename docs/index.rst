@@ -19,7 +19,9 @@ continuous spectra.
 
 The library is organized around four physical arenas. The ``instantons``
 module solves for the bounce profiles that mediate false-vacuum decay and
-computes their configurational entropy. The ``oscillons`` module simulates
+computes their configurational entropy. The ``bosonstars`` module solves the
+Einstein-Klein-Gordon system for self-gravitating complex scalar fields.
+The ``oscillons`` module simulates
 long-lived, localized oscillations of a real scalar field. The
 ``polytropes`` module solves the Lane-Emden equation for self-gravitating
 spheres of gas. The ``cosmology`` module brings the same
@@ -39,6 +41,7 @@ Guide
 
    getting_started
    guide_instantons
+   guide_bosonstars
    guide_oscillons
    guide_polytropes
    guide_cosmology
