@@ -1,67 +1,89 @@
+"""Information-theoretic analysis of angular power spectra.
+
+Tools for CMB angular power spectra C_ell: forming the modal fraction (the
+normalized distribution over multipoles, including the 2*ell+1 degeneracy),
+Shannon entropy and Kullback-Leibler divergence of such distributions, and a
+nonparametric (shrinkage) fit of a noisy spectrum to an orthogonal basis
+following Aghamousa, Arjunwadkar & Souradeep (arXiv:1107.0516).
+"""
+
 import numpy as np
 import tqdm
 
 #----------------------------------------------------------------------FUNCTIONS
 
 def norm(p):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   p = norm(p)
-    ----------------------------------------------------------------------------
-    INPUT:      p (array)
-    ----------------------------------------------------------------------------
-    OUTPUT:     p (array)
-                Returns an L1-normalized array.
-    ----------------------------------------------------------------------------
+    """L1-normalize an array (NaN-safe).
+
+    Parameters
+    ----------
+    p : ndarray
+
+    Returns
+    -------
+    ndarray
+        p divided by its nansum, so the finite entries sum to one.
     """
     return p/np.nansum(p)
 
 def modal_fraction(ell,Cl):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   mf = modal_fraction(ell,Cl)
-    ----------------------------------------------------------------------------
-    INPUT:      ell (integer array)
-                Cl (array)
-    ----------------------------------------------------------------------------
-    OUTPUT:     mf (array)
-                Calculates the modal fraction of an angular power spectrum.
-                Incorporates the 2*ell+1 Jacobian factor coming from the sum
-                over all the m's.
-    ----------------------------------------------------------------------------
+    """Modal fraction of an angular power spectrum.
+
+    Weights each multipole by its 2*ell+1 degenerate m-modes and normalizes,
+    giving the fraction of the total power carried by each ell. Negative
+    entries (unphysical, e.g. noise-dominated estimates) are set to NaN.
+
+    Parameters
+    ----------
+    ell : ndarray
+        Multipole moments.
+    Cl : ndarray
+        Angular power spectrum C_ell. Modified in place where negative.
+
+    Returns
+    -------
+    ndarray
+        Normalized modal fraction over ell.
     """
     nCl = (2.*ell+1.)*Cl
     nCl[nCl < 0] = np.nan
     return norm(nCl)
 
 def KL_divergence(p,q):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   kl = KL_divergence(p,q)
-    ----------------------------------------------------------------------------
-    INPUT:      p (array) a modal fraction
-                q (array) a modal fraction
-    ----------------------------------------------------------------------------
-    OUTPUT:     kl (positive real number)
-                Returns the Kullback-Liebler divergence from q to p. Note that
-                divergence is not symmetric. For more on the information measure
-                see: add website
-    ----------------------------------------------------------------------------
+    """Kullback-Leibler divergence D(p || q) in bits.
+
+    Note that the divergence is not symmetric in its arguments.
+
+    Parameters
+    ----------
+    p : ndarray
+        A modal fraction.
+    q : ndarray
+        A modal fraction. Zero entries are set to NaN in place and dropped
+        from the sum.
+
+    Returns
+    -------
+    float
+        sum_i p_i * log2(p_i / q_i) over finite entries.
     """
     q[q==0] = np.nan
     pq = p/q
     return np.nansum(p*np.log2(pq))
 
 def entropy(p):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:   h = entropy(p)
-    ----------------------------------------------------------------------------
-    INPUT:      p (array) a modal fraction
-    ----------------------------------------------------------------------------
-    OUTPUT:     h (positive real number)
-                Returns the Shannon Entropy of the p distribution.
-    ----------------------------------------------------------------------------
+    """Shannon entropy of a modal fraction, in bits.
+
+    Parameters
+    ----------
+    p : ndarray
+        A modal fraction. Non-positive entries are set to NaN in place and
+        dropped from the sum.
+
+    Returns
+    -------
+    float
+        -sum_i p_i * log2(p_i) over finite entries.
     """
     p[p<=0] = np.nan
     return np.nansum(-p*np.log2(p))
@@ -69,17 +91,37 @@ def entropy(p):
 #----------------------------------------------------------------NONPARAMETRIC FITTING
 
 def basis_cos(j,x):
+    """j-th orthonormal cosine basis function on [0, 1].
+
+    Returns 1 for j = 0 and sqrt(2)*cos(j*pi*x) otherwise.
+    """
     if j == 0:
         return np.ones(np.shape(x))
     else:
         return 1.4142135623730951*np.cos(j*np.pi*x)
 
 def basis_leg(j,x):
+    """j-th orthonormal Legendre polynomial rescaled to [0, 1]."""
     J = np.zeros(j+1)
     J[-1] = 1
     return np.sqrt((2*j+1.))*np.polynomial.legendre.Legendre(J,[0,1])(x)
 
 def npf_makeU(x,basis):
+    """Orthogonal design matrix for a nonparametric fit.
+
+    Parameters
+    ----------
+    x : ndarray
+        Sample points in [0, 1].
+    basis : callable
+        Basis function basis(j, x), e.g. `basis_cos` or `basis_leg`.
+
+    Returns
+    -------
+    ndarray, shape (len(x), len(x))
+        Column i holds basis(i, x)/sqrt(N), so that U is (approximately)
+        orthogonal: U^T U ~ identity.
+    """
     N = len(x)
     U = np.ones([N,N])
     for i in range(0,N):
@@ -87,20 +129,36 @@ def npf_makeU(x,basis):
     return U/np.sqrt(N)
 
 def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
-    """
-    ----------------------------------------------------------------------------
-    FUNCTION:       dic = nonparametric_fit(data, error, basis,[lType, JRange])
-    ----------------------------------------------------------------------------
-    INPUT:          data    (array)
-                    error   (array)
-                    U       (array) Orthogonal basis matrix
-    ----------------------------------------------------------------------------
-    OUTPUT:         dic     (dictionary, keys: nbf, Risk, EDoF)
-                    Outputs a dictionary containing the nonparametric best fit
-                    (nbf) of the data with respect to the basis. Also returns
-                    the risk function (Risk) and the effective degrees of
-                    freedom (EDoF). The algorithm follows 1107.0516v2.
-    ----------------------------------------------------------------------------
+    """Nonparametric shrinkage fit of noisy data to an orthogonal basis.
+
+    Expands the data in the basis U, shrinks the coefficient vector, and
+    selects the amount of shrinkage by minimizing an unbiased estimate of
+    the risk. The algorithm follows arXiv:1107.0516v2.
+
+    Parameters
+    ----------
+    data : ndarray
+        Data vector of length N.
+    error : ndarray
+        One-sigma errors on the data. Used both for the inverse-variance
+        weights and as a diagonal stand-in for the covariance matrix (the
+        off-diagonal terms are set to zero until a full covariance is
+        available).
+    U : ndarray, shape (N, N)
+        Orthogonal basis matrix from `npf_makeU`.
+    lType : str
+        Shrinkage scheme: 'NSS' keeps the first j coefficients (Nested
+        Subset Selection); 'Fractional' applies monotone fractional
+        weights 2**-i.
+    JRange : list of int
+        [minJ, maxJ], the range of shrinkage parameters scanned.
+
+    Returns
+    -------
+    dict
+        'nbf'  : the nonparametric best fit evaluated at the data points,
+        'Risk' : the risk estimate at each J in the scan,
+        'EDoF' : the effective degrees of freedom at each J.
     """
     minJ = JRange[0]
     maxJ = JRange[1]
