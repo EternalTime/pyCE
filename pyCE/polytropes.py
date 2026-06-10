@@ -14,23 +14,28 @@ import numpy as np
 
 
 class polytrope:
-    """
-    ----------------------------------------------------------------------------
-    POLYTROPE CLASS
-    ----------------------------------------------------------------------------
+    """Polytropic stellar model from the Lane-Emden equation.
+
     Creates a polytrope with index n, which is related to the adiabatic index
     via gamma = 1 + 1/n. Uses an RK4 method to solve the Lane-Emden equation.
 
-    ----------------------------------------------------------------------------
-    KWARGS: n               -- polytropic index                     DEFAULT: 1.5
-            dr              -- radial step size                     DEFAULT: .01
-    ----------------------------------------------------------------------------
-    ASPECTS:
-            theta           -- Lane-Emden profile
-            psi             -- radial derivative of theta
-            rho             -- scaled density profile
-            r               -- radial distance array in scaled lengths
-    ----------------------------------------------------------------------------
+    Parameters
+    ----------
+    n : float, optional
+        Polytropic index (default 1.5).
+    dr : float, optional
+        Radial step size (default .01).
+
+    Attributes
+    ----------
+    theta : ndarray
+        Lane-Emden profile.
+    psi : ndarray
+        Radial derivative of theta.
+    rho : ndarray
+        Scaled density profile.
+    r : ndarray
+        Radial distance array in scaled lengths.
     """
     def __init__(self,n = 1.5,dr = .01):
         self.n = n

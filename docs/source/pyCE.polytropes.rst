@@ -1,4 +1,4 @@
-pyCE.polytropes package
+pyCE.polytropes module
 =======================
 
 Module contents

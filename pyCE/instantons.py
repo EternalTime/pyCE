@@ -58,7 +58,7 @@ class instanton:
     denFT, k : ndarray
         Radial Fourier transform of rho and its k-grid.
     mf : ndarray
-        Modal fraction |denFT|**2 / max |denFT|**2.
+        Modal fraction ``|denFT|**2 / max|denFT|**2``.
     Sc : float
         Configurational entropy, -Integral[ mf * ln(mf) ] over k-space
         with the d-dimensional radial measure.

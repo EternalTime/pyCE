@@ -1,4 +1,4 @@
-pyCE.cosmology.analysis.mps package
+pyCE.cosmology.analysis.mps module
 ===================================
 
 Module contents

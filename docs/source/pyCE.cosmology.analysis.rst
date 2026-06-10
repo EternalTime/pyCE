@@ -1,8 +1,8 @@
 pyCE.cosmology.analysis package
 ===============================
 
-Subpackages
------------
+Submodules
+----------
 
 .. toctree::
 

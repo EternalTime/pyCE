@@ -30,4 +30,4 @@ OTHER DEALINGS IN THE SOFTWARE.
 Contact
 =======
 Questions? Comments? Want to collaborate?
-Contact damian.sowinski@dartmouth.edu
+Contact drsowinski@gmail.com

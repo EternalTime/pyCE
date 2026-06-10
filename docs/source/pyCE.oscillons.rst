@@ -1,4 +1,4 @@
-pyCE.oscillons package
+pyCE.oscillons module
 ======================
 
 Module contents
