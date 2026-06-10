@@ -64,4 +64,6 @@ profile is the same three-step computation as everywhere else in this library
 — transform ``p.rho`` with :func:`pyCE.math.radialFT`, normalize, and
 integrate. Compare :math:`S_c` across the index family and you have
 reproduced the heart of the configurational-entropy approach to compact
-objects.
+objects: in Gleiser & Sowinski, *Phys. Lett. B* **727**, 272 (2013), this
+calculation turns into an information-entropic bound on stability, with the
+Chandrasekhar limit emerging from the entropy rather than the pressure.
