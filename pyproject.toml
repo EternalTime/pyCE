@@ -28,6 +28,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/EternalTime/pyCE"
+Documentation = "https://damiansowinski.com/pyCE/"
 
 [tool.setuptools.packages.find]
 include = ["pyCE*"]

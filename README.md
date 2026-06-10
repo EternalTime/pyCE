@@ -38,7 +38,9 @@ norm = radial_integrate(r, f**2, 3)  # d-dimensional radial integration
 
 ## Documentation
 
-Sphinx documentation lives in `docs/`; build with `make -C docs html`.
+The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/)
+(or run `import pyCE; pyCE.docs()` to open it). To build locally: `make -C docs html`
+from the Sphinx sources in `docs/`.
 
 ## License
 
