@@ -16,7 +16,6 @@ utilities.
 
 import numpy as np
 import scipy.special as sp
-from numpy.matlib import repmat
 
 def radialFT(d,f,r):
     """Radial Fourier transform of a radial function in d dimensions.
@@ -98,9 +97,9 @@ def radialFT_mat(d,r):
         a           = float(d)/2.0
         #Bessel kernel with the integration weights baked into each column
         F[1:,:]     = (np.sqrt(np.pi)*(2.0**(a-2))
-                        *repmat(k[1:]**(1-a),len(r),1).T
+                        *np.tile(k[1:]**(1-a),(len(r),1)).T
                         *(sp.jv(a-1,np.outer(k[1:],r))*(r**a))
-                        *repmat(np.array(dr0+list(np.diff(r))),len(k)-1,1))
+                        *np.tile(np.array(dr0+list(np.diff(r))),(len(k)-1,1)))
         #F0 patches the singular k=0 row with the extrapolation stencil
         F0          = np.eye(len(k))
         F0[0,0:8]   = np.array([0, 287/48.0, -(61/4.0), 1033/48.0,
