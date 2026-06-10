@@ -1,4 +1,4 @@
-pyCE.instantons package
+pyCE.instantons module
 =======================
 
 Module contents

@@ -1,4 +1,4 @@
-pyCE.math package
+pyCE.math module
 =================
 
 Module contents
