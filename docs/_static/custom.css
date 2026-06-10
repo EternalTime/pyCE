@@ -1,0 +1,15 @@
+/* pyCE color scheme: Dartmouth green sidebar and header.
+   Overrides the sphinx_rtd_theme defaults (#2980B9 blue). */
+
+.wy-side-nav-search,
+.wy-nav-top {
+    background: #00693E;
+}
+
+.wy-nav-side {
+    background: #122b1e;
+}
+
+.wy-menu-vertical p.caption {
+    color: #8fc7a8;
+}
