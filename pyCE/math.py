@@ -1,13 +1,15 @@
-"""Radial Fourier analysis in d spatial dimensions.
+r"""Radial Fourier analysis in d spatial dimensions.
 
-Helper routines shared by the physics modules of pyCE. A function f(r) that
-depends only on the radial coordinate in d spatial dimensions has a Fourier
-transform that is itself radial in k-space; the angular integrals can be done
-analytically, reducing the d-dimensional transform to a one-dimensional
-integral against a Bessel kernel,
+Helper routines shared by the physics modules of pyCE. A function :math:`f(r)`
+that depends only on the radial coordinate in d spatial dimensions has a
+Fourier transform that is itself radial in k-space; the angular integrals can
+be done analytically, reducing the d-dimensional transform to a
+one-dimensional integral against a Bessel kernel,
 
-    ft(k) = sqrt(pi) * 2**(d/2-2) * k**(1-d/2)
-            * Integral[ f(r) * J_{d/2-1}(k r) * r**(d/2) dr ].
+.. math::
+
+    \mathrm{ft}(k) = \sqrt{\pi} \, 2^{d/2-2} \, k^{1-d/2}
+            \int f(r) \, J_{d/2-1}(k r) \, r^{d/2} \, dr .
 
 This module provides that transform (as a function and as a precomputed
 matrix), together with d-dimensional radial integration and normalization
@@ -18,14 +20,14 @@ import numpy as np
 import scipy.special as sp
 
 def radialFT(d,f,r):
-    """Radial Fourier transform of a radial function in d dimensions.
+    r"""Radial Fourier transform of a radial function in d dimensions.
 
     Parameters
     ----------
     d : int
         Number of spatial dimensions.
     f : ndarray
-        Field values f(r) sampled on the radial grid `r`.
+        Field values :math:`f(r)` sampled on the radial grid `r`.
     r : ndarray
         Radial grid. Assumed to start near 0 and be (close to) uniform.
 
@@ -42,14 +44,14 @@ def radialFT(d,f,r):
     -----
     For d > 1 the angular integrals are done analytically, leaving the
     one-dimensional Bessel integral quoted in the module docstring, which is
-    evaluated with the trapezoidal rule. The kernel k**(1-d/2) is singular at
-    k = 0, so ft[0] is instead obtained by extrapolating ft[1:8] with a
-    seventh-order one-sided finite-difference (interpolation) stencil. For
-    d = 1 the transform reduces to a plain cosine transform.
+    evaluated with the trapezoidal rule. The kernel :math:`k^{1-d/2}` is
+    singular at k = 0, so ft[0] is instead obtained by extrapolating ft[1:8]
+    with a seventh-order one-sided finite-difference (interpolation) stencil.
+    For d = 1 the transform reduces to a plain cosine transform.
 
     The result is rescaled by a constant so that Plancherel's theorem,
-    ||f||^2 = ||ft||^2 (with the d-dimensional radial measure), holds exactly
-    on the discrete grids.
+    :math:`\|f\|^2 = \|\mathrm{ft}\|^2` (with the d-dimensional radial
+    measure), holds exactly on the discrete grids.
     """
     k = np.array(range(5*len(r)))*np.pi/(10*r[-1])
     if d>1:
@@ -110,21 +112,23 @@ def radialFT_mat(d,r):
     return F,k
 
 def sphere_solid_angle(d):
-    """Total solid angle of the unit (d-1)-sphere, 2*pi**(d/2)/Gamma(d/2).
+    r"""Total solid angle of the unit (d-1)-sphere,
+    :math:`2\pi^{d/2}/\Gamma(d/2)`.
 
-    E.g. 2 for d = 1, 2*pi for d = 2, 4*pi for d = 3.
+    E.g. 2 for d = 1, :math:`2\pi` for d = 2, :math:`4\pi` for d = 3.
     """
     return 2*np.pi**(d/2.0)/sp.gamma(d/2.0)
 
 def fourier_factor(d):
-    """Symmetric Fourier normalization constant, (2*pi)**(-d/2)."""
+    r"""Symmetric Fourier normalization constant, :math:`(2\pi)^{-d/2}`."""
     return 1.0/(2*np.pi)**(d/2.0)
 
 def radial_integrate(r,y,d):
-    """Integrate a radial function over all of d-dimensional space.
+    r"""Integrate a radial function over all of d-dimensional space.
 
-    Computes Omega_d * Integral[ y(r) * r**(d-1) dr ] with the trapezoidal
-    rule, where Omega_d is the solid angle from :func:`sphere_solid_angle`.
+    Computes :math:`\Omega_d \int y(r) \, r^{d-1} \, dr` with the trapezoidal
+    rule, where :math:`\Omega_d` is the solid angle from
+    :func:`sphere_solid_angle`.
 
     Parameters
     ----------

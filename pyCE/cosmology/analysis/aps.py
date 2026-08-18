@@ -1,7 +1,8 @@
-"""Information-theoretic analysis of angular power spectra.
+r"""Information-theoretic analysis of angular power spectra.
 
-Tools for CMB angular power spectra C_ell: forming the modal fraction (the
-normalized distribution over multipoles, including the 2*ell+1 degeneracy),
+Tools for CMB angular power spectra :math:`C_\ell`: forming the modal fraction
+(the normalized distribution over multipoles, including the :math:`2\ell+1`
+degeneracy),
 Shannon entropy and Kullback-Leibler divergence of such distributions, and a
 nonparametric (shrinkage) fit of a noisy spectrum to an orthogonal basis
 following Aghamousa, Arjunwadkar & Souradeep (arXiv:1107.0516).
@@ -27,10 +28,11 @@ def norm(p):
     return p/np.nansum(p)
 
 def modal_fraction(ell,Cl):
-    """Modal fraction of an angular power spectrum.
+    r"""Modal fraction of an angular power spectrum.
 
-    Weights each multipole by its 2*ell+1 degenerate m-modes and normalizes,
-    giving the fraction of the total power carried by each ell. Negative
+    Weights each multipole by its :math:`2\ell+1` degenerate m-modes and
+    normalizes, giving the fraction of the total power carried by each ell.
+    Negative
     entries (unphysical, e.g. noise-dominated estimates) are set to NaN.
 
     Parameters
@@ -38,7 +40,8 @@ def modal_fraction(ell,Cl):
     ell : ndarray
         Multipole moments.
     Cl : ndarray
-        Angular power spectrum C_ell. Modified in place where negative.
+        Angular power spectrum :math:`C_\ell`. Modified in place where
+        negative.
 
     Returns
     -------
@@ -50,7 +53,7 @@ def modal_fraction(ell,Cl):
     return norm(nCl)
 
 def KL_divergence(p,q):
-    """Kullback-Leibler divergence D(p || q) in bits.
+    r"""Kullback-Leibler divergence :math:`D(p \| q)` in bits.
 
     Note that the divergence is not symmetric in its arguments.
 
@@ -65,14 +68,14 @@ def KL_divergence(p,q):
     Returns
     -------
     float
-        sum_i p_i * log2(p_i / q_i) over finite entries.
+        :math:`\sum_i p_i \, \log_2(p_i / q_i)` over finite entries.
     """
     q[q==0] = np.nan
     pq = p/q
     return np.nansum(p*np.log2(pq))
 
 def entropy(p):
-    """Shannon entropy of a modal fraction, in bits.
+    r"""Shannon entropy of a modal fraction, in bits.
 
     Parameters
     ----------
@@ -83,7 +86,7 @@ def entropy(p):
     Returns
     -------
     float
-        -sum_i p_i * log2(p_i) over finite entries.
+        :math:`-\sum_i p_i \, \log_2(p_i)` over finite entries.
     """
     p[p<=0] = np.nan
     return np.nansum(-p*np.log2(p))
@@ -91,9 +94,9 @@ def entropy(p):
 #----------------------------------------------------------------NONPARAMETRIC FITTING
 
 def basis_cos(j,x):
-    """j-th orthonormal cosine basis function on [0, 1].
+    r"""j-th orthonormal cosine basis function on [0, 1].
 
-    Returns 1 for j = 0 and sqrt(2)*cos(j*pi*x) otherwise.
+    Returns 1 for j = 0 and :math:`\sqrt{2} \cos(j \pi x)` otherwise.
     """
     if j == 0:
         return np.ones(np.shape(x))
@@ -107,7 +110,7 @@ def basis_leg(j,x):
     return np.sqrt((2*j+1.))*np.polynomial.legendre.Legendre(J,[0,1])(x)
 
 def npf_makeU(x,basis):
-    """Orthogonal design matrix for a nonparametric fit.
+    r"""Orthogonal design matrix for a nonparametric fit.
 
     Parameters
     ----------
@@ -120,7 +123,7 @@ def npf_makeU(x,basis):
     -------
     ndarray, shape (len(x), len(x))
         Column i holds basis(i, x)/sqrt(N), so that U is (approximately)
-        orthogonal: U^T U ~ identity.
+        orthogonal: :math:`U^T U \sim` identity.
     """
     N = len(x)
     U = np.ones([N,N])
@@ -129,7 +132,7 @@ def npf_makeU(x,basis):
     return U/np.sqrt(N)
 
 def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
-    """Nonparametric shrinkage fit of noisy data to an orthogonal basis.
+    r"""Nonparametric shrinkage fit of noisy data to an orthogonal basis.
 
     Expands the data in the basis U, shrinks the coefficient vector, and
     selects the amount of shrinkage by minimizing an unbiased estimate of
@@ -149,7 +152,7 @@ def nonparametric_fit(data,error,U,lType = 'NSS',JRange = [1,100]):
     lType : str
         Shrinkage scheme: 'NSS' keeps the first j coefficients (Nested
         Subset Selection); 'Fractional' applies monotone fractional
-        weights 2**-i.
+        weights :math:`2^{-i}`.
     JRange : list of int
         [minJ, maxJ], the range of shrinkage parameters scanned.
 
