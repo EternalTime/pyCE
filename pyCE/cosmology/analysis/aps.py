@@ -123,7 +123,7 @@ def npf_makeU(x,basis):
     -------
     ndarray, shape (len(x), len(x))
         Column i holds basis(i, x)/sqrt(N), so that U is (approximately)
-        orthogonal: :math:`U^T U \sim` identity.
+        orthogonal: :math:`U^T U \sim \mathrm{identity}`.
     """
     N = len(x)
     U = np.ones([N,N])
