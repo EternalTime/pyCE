@@ -9,6 +9,10 @@ description = "A Python library for Configurational Entropy projects"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Damian R Sowinski", email = "drsowinski@gmail.com" }]
+# The floor is set by np.trapezoid (used unconditionally in pyCE.math,
+# pyCE.bosonstars and pyCE.cosmology.analysis.mps), which needs numpy >= 2.
+# The first astropy release that allows numpy 2 is 6.1.0, and its
+# requires-python is >=3.10; on 3.9 no resolution satisfies both.
 requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 3 - Alpha",
