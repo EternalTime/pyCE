@@ -14,8 +14,9 @@ pip install -e .
 ```
 
 Requires Python 3.8+. Dependencies (numpy, scipy, matplotlib, astropy, tqdm)
-are installed automatically. The virtual environment keeps the install off your
-system Python, which package managers such as Homebrew refuse to modify.
+are installed automatically. The
+[Getting Started](https://damiansowinski.com/pyCE/getting_started.html) guide is
+the authoritative reference for installation.
 
 ## Modules
 
