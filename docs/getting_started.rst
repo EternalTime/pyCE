@@ -18,7 +18,7 @@ virtual environment::
     pip install -e .
 
 The ``-e`` flag installs in editable mode: changes you make to the source are
-picked up immediately, with no reinstall. Check that it works::
+picked up immediately, with no reinstall. Check that the install works::
 
     >>> import pyCE
 
