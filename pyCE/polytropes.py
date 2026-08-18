@@ -1,23 +1,27 @@
-"""Polytropic stellar models via the Lane-Emden equation.
+r"""Polytropic stellar models via the Lane-Emden equation.
 
 A polytrope is a self-gravitating fluid sphere with equation of state
-P = K * rho**gamma, gamma = 1 + 1/n. In scaled variables the structure is
-governed by the Lane-Emden equation
+:math:`P = K \rho^{\gamma}`, :math:`\gamma = 1 + 1/n`. In scaled variables
+the structure is governed by the Lane-Emden equation
 
-    theta'' + (2/r) theta' = -theta**n,
+.. math::
 
-with theta(0) = 1 and theta'(0) = 0; the density is rho = theta**n and the
-(first) zero of theta marks the stellar surface.
+    \theta'' + \frac{2}{r} \theta' = -\theta^n ,
+
+with :math:`\theta(0) = 1` and :math:`\theta'(0) = 0`; the density is
+:math:`\rho = \theta^n` and the (first) zero of :math:`\theta` marks the
+stellar surface.
 """
 
 import numpy as np
 
 
 class polytrope:
-    """Polytropic stellar model from the Lane-Emden equation.
+    r"""Polytropic stellar model from the Lane-Emden equation.
 
     Creates a polytrope with index n, which is related to the adiabatic index
-    via gamma = 1 + 1/n. Uses an RK4 method to solve the Lane-Emden equation.
+    via :math:`\gamma = 1 + 1/n`. Uses an RK4 method to solve the Lane-Emden
+    equation.
 
     Parameters
     ----------
@@ -31,7 +35,7 @@ class polytrope:
     theta : ndarray
         Lane-Emden profile.
     psi : ndarray
-        Radial derivative of theta.
+        Radial derivative of :math:`\theta`.
     rho : ndarray
         Scaled density profile.
     r : ndarray
@@ -45,16 +49,16 @@ class polytrope:
         self.rho = self.theta**self.n
 
     def __solve_Lane_Emden__(self):
-        """Integrate the Lane-Emden equation outward with classic RK4.
+        r"""Integrate the Lane-Emden equation outward with classic RK4.
 
         The second-order equation is split into the first-order system
-        theta' = psi and psi' = -(2/r) psi - theta**n. Initial data sit at
-        r = eps with theta = 1 and psi = -eps (an infinitesimal inward slope
-        avoids the coordinate singularity at the origin). Integration stops
-        once theta drops to 1e-5, i.e. at the stellar surface, or on
-        OverflowError (n >= 5 polytropes have no finite surface). The
-        profile is then truncated to theta > 0 and stored in self.theta,
-        self.psi, self.r.
+        :math:`\theta' = \psi` and :math:`\psi' = -(2/r) \psi - \theta^n`.
+        Initial data sit at r = eps with theta = 1 and psi = -eps (an
+        infinitesimal inward slope avoids the coordinate singularity at the
+        origin). Integration stops once theta drops to 1e-5, i.e. at the
+        stellar surface, or on OverflowError (n >= 5 polytropes have no
+        finite surface). The profile is then truncated to theta > 0 and
+        stored in self.theta, self.psi, self.r.
         """
         n  = 0
         F1 = lambda r,theta,psi: psi
