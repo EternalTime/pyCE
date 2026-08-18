@@ -13,7 +13,7 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-Requires Python 3.8+. Dependencies (numpy, scipy, matplotlib, astropy, tqdm)
+Requires Python 3.10+. Dependencies (numpy, scipy, matplotlib, astropy, tqdm)
 are installed automatically. The
 [Getting Started](https://damiansowinski.com/pyCE/getting_started.html) guide is
 the authoritative reference for installation.
