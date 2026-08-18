@@ -3,11 +3,15 @@ r"""Simulation of oscillons in d spatial dimensions.
 Evolves a spherically symmetric real scalar field in the asymmetric
 double-well (Kolb & Turner) potential
 
-    V(phi) = (1/2) phi**2 - (alpha/3) phi**3 + (1/4) phi**4,
+.. math::
 
-with alpha = (3/sqrt(2)) * (1 + asymmetry_factor). The field is evolved as
-the first-order system (phi, Phi, Pi), where Phi is the radial gradient and
-Pi the generalized momentum, on a radial grid in monotonically increasingly
+    V(\phi) = \frac{1}{2} \phi^2 - \frac{\alpha}{3} \phi^3
+              + \frac{1}{4} \phi^4 ,
+
+with :math:`\alpha = (3/\sqrt{2}) (1 + \mathrm{asymmetry\_factor})`. The
+field is evolved as the first-order system :math:`(\phi, \Phi, \Pi)`, where
+:math:`\Phi` is the radial gradient and :math:`\Pi` the generalized momentum,
+on a radial grid in monotonically increasingly
 boosted (MIB) coordinates: an outer region of the grid is smoothly boosted
 outward so that outgoing radiation is carried off the lattice instead of
 reflecting back onto the oscillon, mimicking an infinite domain. Time
@@ -110,24 +114,26 @@ class oscillon:
 
 
     def initialize_field(self,field_type = 'gaussian', *params):
-        """Build the initial field vector (phi, Phi, Pi).
+        r"""Build the initial field vector :math:`(\phi, \Phi, \Pi)`.
 
         Parameters
         ----------
         field_type : str
             Initial profile shape. Currently only 'gaussian' is implemented:
-            a Gaussian of radius ``params[0]`` (note radius = sqrt(2)*sigma)
-            with amplitude at the true-vacuum field value
-            A = (alpha + sqrt(alpha**2 - 4))/2.
+            a Gaussian of radius ``params[0]`` (note
+            :math:`\mathrm{radius} = \sqrt{2} \sigma`) with amplitude at the
+            true-vacuum field value
+            :math:`A = (\alpha + \sqrt{\alpha^2 - 4})/2`.
         *params
             Shape parameters; for 'gaussian', the radius r0.
 
         Returns
         -------
         ndarray, shape (3, N)
-            Stacked initial data [phi, Phi, Pi]. Pi is initialized to
-            -f*Phi, i.e. the time derivative of phi is zero in the boosted
-            coordinates. Returns 0 if `field_type` is not recognized.
+            Stacked initial data [phi, Phi, Pi]. :math:`\Pi` is initialized
+            to :math:`-f \Phi`, i.e. the time derivative of :math:`\phi` is
+            zero in the boosted coordinates. Returns 0 if `field_type` is not
+            recognized.
         """
         if field_type == 'gaussian':
             r0 = params[0]
@@ -145,7 +151,8 @@ class oscillon:
         return np.array([f0,f1,f2])
 
     def _define_boost_factor(self,radius_MIB,delta_MIB):
-        """Set up the MIB shift profile f(r) and its derivative df/dr.
+        r"""Set up the MIB shift profile :math:`f(r)` and its derivative
+        :math:`df/dr`.
 
         f is a smoothed step (tanh of width delta_MIB centered on
         radius_MIB) rising from 0 in the interior to ~1 in the outer region,
@@ -159,25 +166,30 @@ class oscillon:
         self._df = d_boost
 
     def _potential(self,phi):
-        """K&T potential V(phi) = phi**2/2 - alpha*phi**3/3 + phi**4/4."""
+        r"""K&T potential
+        :math:`V(\phi) = \phi^2/2 - \alpha \phi^3/3 + \phi^4/4`.
+        """
         phi2 = phi**2
         phi3 = phi2*phi
         phi4 = phi2*phi2
         return .5*phi2 - self.alpha*phi3/3. + .25*phi4
 
     def _gradient_potential(self,phi):
-        """Potential gradient V'(phi) = phi - alpha*phi**2 + phi**3."""
+        r"""Potential gradient
+        :math:`V'(\phi) = \phi - \alpha \phi^2 + \phi^3`.
+        """
         phi2 = phi**2
         phi3 = phi2*phi
         return phi - self.alpha*phi2 + phi3
 
     def _timestep(self,fields):
-        """Advance the field vector by one step of iterated Crank-Nicolson.
+        r"""Advance the field vector by one step of iterated Crank-Nicolson.
 
         A predictor half-step (plus dissipation) seeds the iteration; each
         pass re-evaluates the RHS at the running average and reapplies the
-        boundary conditions (regularity of Phi at the origin via a one-sided
-        stencil, Phi(0) = 0, even Pi at the origin, and zero-gradient outer
+        boundary conditions (regularity of :math:`\Phi` at the origin via a
+        one-sided stencil, :math:`\Phi(0) = 0`, even :math:`\Pi` at the
+        origin, and zero-gradient outer
         boundary). Iteration stops when successive iterates differ by less
         than `tol` in the L2 norm. The grid quantities are then advanced by
         `_timestep_update`.
@@ -203,10 +215,11 @@ class oscillon:
         return fields_new
 
     def _simulation_start(self):
-        """Initialize the time-dependent grid quantities.
+        r"""Initialize the time-dependent grid quantities.
 
-        r~ (the boosted radial coordinate), the metric-like factors
-        a (initially 1) and b = f/a, and d(r~^d) (the volume-element
+        :math:`\tilde{r}` (the boosted radial coordinate), the metric-like
+        factors a (initially 1) and :math:`b = f/a`, and
+        :math:`d(\tilde{r}^d)` (the volume-element
         differences used by the flux-conservative derivative in `_F`,
         with one-sided stencils at the origin and outer edge).
         """
@@ -221,10 +234,11 @@ class oscillon:
                             'valid')
 
     def _timestep_update(self):
-        """Advance the MIB grid quantities by dt.
+        r"""Advance the MIB grid quantities by dt.
 
-        The boosted radius moves as dr~/dt = f and the factor a grows as
-        da/dt = df/dr; b and the volume elements are recomputed to match.
+        The boosted radius moves as :math:`d\tilde{r}/dt = f` and the factor
+        a grows as :math:`da/dt = df/dr`; b and the volume elements are
+        recomputed to match.
         """
         self._rt        = self._rt + self._f*self.dt
         self._rtd       = self._rt**(self.d-1)
@@ -237,20 +251,21 @@ class oscillon:
                             'valid')
 
     def _F(self,fields):
-        """Right-hand side of the first-order MIB evolution system.
+        r"""Right-hand side of the first-order MIB evolution system.
 
-        With fields = (phi, Phi, Pi), a the MIB factor, and b = f/a:
+        With fields = :math:`(\phi, \Phi, \Pi)`, a the MIB factor, and
+        :math:`b = f/a`:
 
-        - d(phi)/dt = Pi/a + b*Phi
-        - d(Phi)/dt = the radial derivative of d(phi)/dt (centered
-          differences in the bulk, one-sided stencils at the boundaries,
-          and a regularity-preserving extrapolation at the first interior
-          point)
-        - d(Pi)/dt  = the flux-conservative radial derivative of the
-          momentum flux (b*Pi + Phi/a) * r~^(d-1), divided by the volume
-          element, minus a*V'(phi), with the geometric source term
-          -(d-1)*(f/r~)*Pi; the origin and outer edge are patched with
-          one-sided extrapolation stencils.
+        - :math:`d(\phi)/dt = \Pi/a + b \Phi`
+        - :math:`d(\Phi)/dt` = the radial derivative of :math:`d(\phi)/dt`
+          (centered differences in the bulk, one-sided stencils at the
+          boundaries, and a regularity-preserving extrapolation at the first
+          interior point)
+        - :math:`d(\Pi)/dt` = the flux-conservative radial derivative of the
+          momentum flux :math:`(b \Pi + \Phi/a) \, \tilde{r}^{d-1}`, divided
+          by the volume element, minus :math:`a V'(\phi)`, with the geometric
+          source term :math:`-(d-1) (f/\tilde{r}) \Pi`; the origin and outer
+          edge are patched with one-sided extrapolation stencils.
 
         Commented-out stencils record alternatives that did not converge.
 
@@ -415,7 +430,9 @@ class oscillon:
         self.core = core
 
     def _plot_profile(self,fields,num_fields):
-        """Live semilog plot of |phi|, |Phi|, |Pi| against r."""
+        r"""Live semilog plot of :math:`|\phi|`, :math:`|\Phi|`,
+        :math:`|\Pi|` against r.
+        """
         x = self.r#[0:50]
         plt.figure(1)
         plt.clf()
@@ -431,7 +448,7 @@ class oscillon:
         plt.pause(.0000000000001)
 
     def _plot_energy_density(self,T):
-        """Live semilog plot of the energy density rho(r)."""
+        r"""Live semilog plot of the energy density :math:`\rho(r)`."""
         x = self.r
         y = np.abs(T[0])
         plt.figure(2)
@@ -445,7 +462,9 @@ class oscillon:
         plt.pause(.0000000000001)
 
     def _plot_energy_shells(self,T):
-        """Live semilog plot of the energy per radial shell, rho * a * r~^(d-1)."""
+        r"""Live semilog plot of the energy per radial shell,
+        :math:`\rho \, a \, \tilde{r}^{d-1}`.
+        """
         x = self.r
         y = np.abs(T[0])*self._a*self._rtd
         plt.figure(3)

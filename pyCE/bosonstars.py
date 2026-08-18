@@ -1,15 +1,18 @@
-"""Generation and configurational-entropy analysis of boson stars.
+r"""Generation and configurational-entropy analysis of boson stars.
 
 Solves for spherically symmetric, ground-state solutions of the
 Einstein-Klein-Gordon system for a complex scalar field with the harmonic
-ansatz phi(r, t) = phi(r) e^(-i omega t) and the potential::
+ansatz :math:`\phi(r, t) = \phi(r) e^{-i \omega t}` and the potential
 
-    V(|phi|) = |phi|**2 + (lamb/2)|phi|**4
+.. math::
 
-In the standard 3+1 metric ansatz, ds^2 = -alpha(r)^2 dt^2 + a(r)^2 dr^2
-+ r^2 dOmega^2, the field and metric functions obey a coupled ODE system in
-r with a frequency eigenvalue omega: only a discrete set of central lapse
-values yields a profile that decays into flat space, and the nodeless member
+    V(|\phi|) = |\phi|^2 + \frac{\lambda}{2} |\phi|^4
+
+In the standard 3+1 metric ansatz,
+:math:`ds^2 = -\alpha(r)^2 dt^2 + a(r)^2 dr^2 + r^2 d\Omega^2`, the field and
+metric functions obey a coupled ODE system in r with a frequency eigenvalue
+:math:`\omega`: only a discrete set of central lapse values yields a profile
+that decays into flat space, and the nodeless member
 of that set is the ground state. The solver finds it by bisection shooting
 on the central lapse, integrating outward with RK4.
 
@@ -22,7 +25,7 @@ import numpy as np
 from pyCE.math import radialFT, radial_integrate
 
 class BosonStar:
-    """Ground-state boson star and its configurational entropy.
+    r"""Ground-state boson star and its configurational entropy.
 
     Instantiation does all the work: it shoots for the central lapse,
     integrates the Einstein-Klein-Gordon system outward, and extracts the
@@ -38,9 +41,10 @@ class BosonStar:
         Initial bracket for the central lapse used by the shooting method
         (default [0, 1]). The supplied list is copied, never modified.
     dr : float, optional
-        Radial step size (default .01). For small phi0 the gradients are
-        gentle but the star is large; for large phi0 the reverse — lower
-        `dr` if the shooting method stalls.
+        Radial step size (default .01). For small :math:`\phi_0` the
+        gradients are gentle but the star is large; for large
+        :math:`\phi_0` the reverse — lower `dr` if the shooting method
+        stalls.
     r_max : float, optional
         Maximum integration radius (default 50). Too small and the shot
         converges to a profile that is not yet the ground state; too large
@@ -59,14 +63,15 @@ class BosonStar:
         Scalar field profile and its radial derivative.
     a, alpha : ndarray
         Radial metric function and lapse, with the lapse rescaled so
-        alpha -> 1 at the outer edge (asymptotic flatness).
+        :math:`\alpha \to 1` at the outer edge (asymptotic flatness).
     omega : float
-        Frequency eigenvalue of the harmonic ansatz; omega < 1 signals a
-        gravitationally bound configuration.
+        Frequency eigenvalue of the harmonic ansatz; :math:`\omega < 1`
+        signals a gravitationally bound configuration.
     rho : ndarray
         Energy density.
     mass : ndarray
-        Misner-Sharp mass within radius r, m(r) = (r/2)(1 - 1/a**2).
+        Misner-Sharp mass within radius r,
+        :math:`m(r) = (r/2)(1 - 1/a^2)`.
     M : float
         Total (ADM) mass, mass[-1].
     R : float
@@ -77,8 +82,8 @@ class BosonStar:
     mf : ndarray
         Modal fraction ``|denFT|**2 / max|denFT|**2``.
     Sc : float
-        Configurational entropy, -Integral[ mf * ln(mf) ] over k-space
-        with the d = 3 radial measure.
+        Configurational entropy, :math:`-\int \mathrm{mf} \, \ln(\mathrm{mf})`
+        over k-space with the d = 3 radial measure.
 
     Examples
     --------
@@ -165,12 +170,12 @@ class BosonStar:
             plt.pause(.001)
 
     def _get_entropy(self):
-        """Configurational entropy of the energy-density power spectrum.
+        r"""Configurational entropy of the energy-density power spectrum.
 
         Fourier transforms rho, normalizes the power spectrum by its peak
-        to form the modal fraction mf, and integrates -mf*ln(mf) over
-        k-space. The machine epsilon inside the log regularizes mf = 0
-        modes.
+        to form the modal fraction mf, and integrates
+        :math:`-\mathrm{mf} \ln(\mathrm{mf})` over k-space. The machine
+        epsilon inside the log regularizes mf = 0 modes.
         """
         self.denFT, self.k = radialFT(3, self.rho, self.r)
         f = np.abs(self.denFT)**2
@@ -179,7 +184,7 @@ class BosonStar:
             self.k, self.mf*np.log(np.finfo(float).eps + self.mf), 3)
 
     def _RK4_(self, r_max):
-        """Integrate the Einstein-Klein-Gordon system outward with RK4.
+        r"""Integrate the Einstein-Klein-Gordon system outward with RK4.
 
         The unknowns are (a, alpha, phi, Phi); the right-hand sides below
         are the standard polar-areal-gauge equations with the harmonic
@@ -187,8 +192,8 @@ class BosonStar:
         Integration stops at `r_max` or when any unknown leaves a
         generous bounding box (a diverging shot announcing itself). On
         exit, the lapse is rescaled by its asymptotic value so that
-        alpha -> 1 at the edge, and that rescaling factor is the
-        frequency eigenvalue omega.
+        :math:`\alpha \to 1` at the edge, and that rescaling factor is the
+        frequency eigenvalue :math:`\omega`.
         """
         c = 0.16666666666666666666667
 

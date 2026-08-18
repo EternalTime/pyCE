@@ -20,7 +20,7 @@ directory = os.path.dirname(__file__)
 #--------------------------------------------------------------------- FUNCTIONS
 
 def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
-    """Read a CMB angular power spectrum.
+    r"""Read a CMB angular power spectrum.
 
     Parameters
     ----------
@@ -36,7 +36,8 @@ def read_power_spectrum(telescope = 'Planck', ps = 'TT', psType = 'data'):
     Returns
     -------
     dict
-        Keys 'ell', 'Dl', 'Cl' (with Cl = 2*pi*Dl/(ell*(ell+1))), and, for
+        Keys 'ell', 'Dl', 'Cl' (with
+        :math:`C_\ell = 2\pi D_\ell / (\ell (\ell+1))`), and, for
         psType='data', 'error'. Prints a message and returns None if the
         read fails.
     """
