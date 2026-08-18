@@ -43,9 +43,9 @@ dimensions, the most familiar localized profile there is::
     Sc = -radial_integrate(k, mf*np.log(np.finfo(float).eps + mf), 3)
     print(Sc)
 
-Transform, normalize, integrate. Every guide here is a variation on that theme,
-with the field profile coming from a shooting method, a lattice simulation, a
-stellar model, or a satellite.
+Transform, normalize, integrate. Every guide in this documentation is a
+variation on that theme, with the field profile coming from a shooting
+method, a lattice simulation, a stellar model, or a satellite.
 
 Convince yourself that the transform can be trusted. Plancherel's theorem holds
 on the discrete grids by construction::
