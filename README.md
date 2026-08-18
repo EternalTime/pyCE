@@ -8,11 +8,15 @@ information-theoretic measure of spatial complexity for field configurations.
 ```bash
 git clone https://github.com/EternalTime/pyCE.git
 cd pyCE
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 
 Requires Python 3.8+. Dependencies (numpy, scipy, matplotlib, astropy, tqdm)
-are installed automatically.
+are installed automatically. The
+[Getting Started](https://damiansowinski.com/pyCE/getting_started.html) guide is
+the authoritative reference for installation.
 
 ## Modules
 
@@ -40,8 +44,22 @@ norm = radial_integrate(r, f**2, 3)  # d-dimensional radial integration
 ## Documentation
 
 The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/)
-(or run `import pyCE; pyCE.docs()` to open it). To build locally: `make -C docs html`
-from the Sphinx sources in `docs/`.
+(or run `import pyCE; pyCE.docs()` to open it). To build locally from the Sphinx
+sources in `docs/`:
+
+```bash
+source .venv/bin/activate
+pip install -e '.[docs]'
+make -C docs html
+```
+
+## Testing
+
+```bash
+source .venv/bin/activate
+pip install -e '.[test]'
+python -m pytest
+```
 
 ## License
 

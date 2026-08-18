@@ -26,6 +26,15 @@ dependencies = [
     "tqdm",
 ]
 
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+]
+test = [
+    "pytest",
+]
+
 [project.urls]
 Homepage = "https://github.com/EternalTime/pyCE"
 Documentation = "https://damiansowinski.com/pyCE/"

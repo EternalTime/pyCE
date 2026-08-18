@@ -10,5 +10,7 @@ dist/
 # Sphinx
 docs/_build/
 
+.venv/
+
 # OS
 .DS_Store
