@@ -27,8 +27,8 @@ If the import goes through quietly, you're ready.
 Your first configurational entropy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's take the most familiar localized profile there is - a Gaussian in three
-spatial dimensions::
+Let's compute the configurational entropy of a Gaussian in three spatial
+dimensions, the most familiar localized profile there is::
 
     import numpy as np
     from pyCE.math import radialFT, radial_integrate

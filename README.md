@@ -14,7 +14,7 @@ pip install -e .
 ```
 
 Requires Python 3.10+; numpy, scipy, matplotlib, astropy, and tqdm are installed
-automatically. The authoritative reference is
+automatically. The authoritative reference for installation is
 [Getting Started](https://damiansowinski.com/pyCE/getting_started.html).
 
 ## Modules
@@ -43,7 +43,8 @@ norm = radial_integrate(r, f**2, 3)  # d-dimensional radial integration
 ## Documentation
 
 Hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/), or run
-`import pyCE; pyCE.docs()` to open it. To build the Sphinx sources locally:
+`import pyCE; pyCE.docs()` to open it. To build the Sphinx sources in `docs/`
+locally:
 
 ```bash
 source .venv/bin/activate
