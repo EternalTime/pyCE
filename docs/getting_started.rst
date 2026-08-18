@@ -9,7 +9,7 @@ environment now will save you headaches later.
 Installation
 ^^^^^^^^^^^^
 
-pyCE requires Python 3.8 or newer. Clone the repository and install it into a
+pyCE requires Python 3.10 or newer. Clone the repository and install it into a
 virtual environment::
 
     git clone https://github.com/EternalTime/pyCE.git
