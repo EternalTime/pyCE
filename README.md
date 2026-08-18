@@ -48,6 +48,7 @@ The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.
 sources in `docs/`:
 
 ```bash
+source .venv/bin/activate
 pip install -e '.[docs]'
 make -C docs html
 ```
@@ -55,6 +56,7 @@ make -C docs html
 ## Testing
 
 ```bash
+source .venv/bin/activate
 pip install -e '.[test]'
 python -m pytest
 ```
