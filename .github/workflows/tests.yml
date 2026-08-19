@@ -38,4 +38,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e '.[docs]'
       - name: Build the manual
-        run: make -C docs html SPHINXOPTS=-W
+        run: make -C docs html

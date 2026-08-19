@@ -2,7 +2,14 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+# -W turns Sphinx warnings into errors, so a stale toctree entry, a malformed
+# directive or a duplicate label fails the build instead of scrolling past.
+# (Unresolved Python cross-references stay silent unless -n is added too.)
+# It lives here rather than in the CI command so that the plain
+# `make -C docs html` published in the README behaves the same on a
+# contributor's machine as it does on GitHub.  `?=` keeps it overridable, e.g.
+# `SPHINXOPTS= make html` while drafting.
+SPHINXOPTS   ?= -W
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = pyCE
 SOURCEDIR     = .
