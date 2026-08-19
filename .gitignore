@@ -14,3 +14,10 @@ docs/_build/
 
 # OS
 .DS_Store
+
+# Local notes
+/CLAUDE.md
+/AGENTS.md
+/SUMMARY.md
+/TASKS.md
+/INSTRUCTIONS.md
