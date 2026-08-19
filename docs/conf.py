@@ -12,6 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import logging
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
@@ -214,6 +215,30 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+
+
+class _IgnoreUnreachableInventories(logging.Filter):
+    """Drop intersphinx's warning about inventories it could not download.
+
+    The manual is built with warnings treated as errors, so without this a
+    network blip while fetching https://docs.python.org/3/objects.inv would
+    fail the build for reasons that have nothing to do with the documentation.
+    Sphinx logs that warning without a type, so ``suppress_warnings`` cannot
+    match it (see ``sphinx.util.logging.is_suppressed_warning``).  Only this
+    one message is dropped: a malformed ``intersphinx_mapping`` is logged as an
+    error and unresolved cross-references are reported separately, so both
+    still fail the build.
+    """
+
+    def filter(self, record):
+        return 'failed to reach any of the inventories' not in str(record.msg)
+
+
+def setup(app):
+    logging.getLogger('sphinx.sphinx.ext.intersphinx').addFilter(
+        _IgnoreUnreachableInventories()
+    )
+
 
 # -- Options for todo extension ----------------------------------------------
 
