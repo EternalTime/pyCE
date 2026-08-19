@@ -38,6 +38,7 @@ dependencies = [
 docs = [
     "sphinx",
     "sphinx_rtd_theme",
+    "sphinx-copybutton",
 ]
 test = [
     "pytest",
