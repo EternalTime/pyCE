@@ -54,6 +54,9 @@ napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
 
+copybutton_prompt_text = r'>>> '
+copybutton_prompt_is_regexp = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
