@@ -1,10 +1,10 @@
 Instantons
 ==========
 
-In 1977 Sidney Coleman worked out the fate of the false vacuum: a metastable
-state decays by nucleating bubbles of true vacuum, and the bubble that
-controls the decay rate — the bounce — is an O(d)-symmetric solution of the
-Euclidean equations of motion. The :mod:`pyCE.instantons` module finds these
+The false vacuum is not forever. In 1977 Sidney Coleman worked out its
+fate: a metastable state decays by nucleating bubbles of true vacuum, and
+the bubble that controls the decay rate — the bounce — is an O(d)-symmetric
+solution of the Euclidean equations of motion. The :mod:`pyCE.instantons` module finds these
 bounces and asks an information-theoretic question of them: how is the energy
 of a bounce organized across scales, and how does that organization respond
 as the potential is deformed?

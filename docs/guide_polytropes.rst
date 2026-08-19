@@ -1,9 +1,10 @@
 Polytropes
 ==========
 
-In 1870 Jonathan Homer Lane, an American astrophysicist working largely
-alone, asked what the inside of the Sun must look like if it were a
-self-gravitating sphere of gas in hydrostatic equilibrium. Robert Emden
+1870 was a lonely year for American astrophysics. Jonathan Homer Lane,
+working largely by himself, asked what the inside of the Sun must look
+like if it were a self-gravitating sphere of gas in hydrostatic
+equilibrium. Robert Emden
 systematized the answer in his 1907 *Gaskugeln*, and the equation that bears
 both their names has been a workhorse of stellar structure ever since —
 simple enough to solve on a laptop in milliseconds, rich enough that

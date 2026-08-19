@@ -1,9 +1,9 @@
 The Cosmic Microwave Background
 ===============================
 
-In 1965 Arno Penzias and Robert Wilson could not get rid of a persistent hiss
-in their horn antenna — not after pointing it away from New York City, and
-not after evicting the pigeons. The hiss was the cosmic microwave background,
+The pigeons were innocent. In 1965 Arno Penzias and Robert Wilson could
+not get rid of a persistent hiss in their horn antenna: not after pointing
+it away from New York City, and not after evicting the pigeons. The hiss was the cosmic microwave background,
 and in the decades since, COBE, WMAP, and Planck have turned that noise into
 the most precisely measured spectrum in cosmology. The angular power spectrum
 :math:`C_\ell` is usually mined for cosmological parameters; the

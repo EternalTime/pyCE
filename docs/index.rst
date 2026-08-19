@@ -1,11 +1,11 @@
 pyCE
 ====
 
-In 2012 Marcelo Gleiser and Nikitas Stamatopoulos asked a deceptively simple
-question — how much information does it take to describe a localized field
-configuration? — and answered it with a new measure, the configurational
-entropy, built from the Shannon entropy of the configuration's power
-spectrum. Where the energy of a configuration tells you what it costs to
+How much information does it take to describe a localized field
+configuration? Marcelo Gleiser and Nikitas Stamatopoulos posed that
+deceptively simple question in 2012, and answered it with a new measure,
+the configurational entropy, built from the Shannon entropy of the
+configuration's power spectrum. Where the energy of a configuration tells you what it costs to
 assemble, its configurational entropy tells you how that cost is organized
 across scales. The measure has since been put to work on solitons, compact
 stars, phase transitions, and the cosmic microwave background.
@@ -52,8 +52,23 @@ Reference
 .. toctree::
    :maxdepth: 2
 
-   source/modules
+   api/pyCE
    license
+
+Citing
+^^^^^^
+
+Sowinski DR. *pyCE* [computer software]. Version 0.2.0. 2018. Accessed July 21, 2026. https://github.com/EternalTime/pyCE
+
+.. code-block:: bibtex
+
+   @software{sowinski_pyce,
+     author  = {Sowinski, Damian R.},
+     title   = {pyCE: Configurational entropy tools for classical field configurations},
+     year    = {2018},
+     version = {0.2.0},
+     url     = {https://github.com/EternalTime/pyCE}
+   }
 
 References
 ^^^^^^^^^^

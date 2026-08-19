@@ -1,5 +1,8 @@
+License & Contact
+=================
+
 License
-=======
+-------
 
 The MIT License (MIT)
 
@@ -27,7 +30,25 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 
+Citing
+------
+
+If you use pyCE in your research, please cite it:
+
+Sowinski DR. *pyCE* [computer software]. Version 0.2.0. 2018. Accessed July 21, 2026. https://github.com/EternalTime/pyCE
+
+.. code-block:: bibtex
+
+   @software{sowinski_pyce,
+     author  = {Sowinski, Damian R.},
+     title   = {pyCE: Configurational entropy tools for classical field configurations},
+     year    = {2018},
+     version = {0.2.0},
+     url     = {https://github.com/EternalTime/pyCE}
+   }
+
 Contact
-=======
+-------
+
 Questions? Comments? Want to collaborate?
 Contact drsowinski@gmail.com

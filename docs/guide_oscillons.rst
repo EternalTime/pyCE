@@ -1,9 +1,10 @@
 Oscillons
 =========
 
-In 1976 Igor Bogolyubsky and Vladimir Makhankov noticed that a collapsing
-bubble of scalar field does not always die — it can settle into a localized,
-pulsating lump that persists for thousands of oscillations. Marcelo Gleiser
+Watch a collapsing bubble of scalar field and you expect a quick death.
+Igor Bogolyubsky and Vladimir Makhankov noticed in 1976 that the bubble
+sometimes refuses: it can settle into a localized, pulsating lump that
+persists for thousands of oscillations. Marcelo Gleiser
 rediscovered these objects in 1994 and christened them oscillons. They are
 not protected by any conserved charge; they survive on dynamics alone, which
 is what makes their longevity remarkable and their eventual death worth

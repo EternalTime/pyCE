@@ -48,6 +48,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
+    'sphinx_copybutton',
 ]
 
 napoleon_google_docstring = False

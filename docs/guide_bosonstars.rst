@@ -1,9 +1,10 @@
 Boson Stars
 ===========
 
-In 1968 David Kaup asked what happens when a complex scalar field is left
-alone with its own gravity, and found the answer is a star: a localized,
-stationary, horizonless solution of the Einstein-Klein-Gordon system. Remo
+David Kaup asked, in 1968, what happens when a complex scalar field is
+left alone with its own gravity, and found the answer is a star: a
+localized, stationary, horizonless solution of the Einstein-Klein-Gordon
+system. Remo
 Ruffini and Silvano Bonazzola reached the same configurations a year later
 from the quantum side, as the ground state of a cold cloud of gravitating
 bosons. Unlike a fermion star, nothing here is held up by degeneracy
