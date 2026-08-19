@@ -1,6 +1,6 @@
 # pyCE
 
-A Python library for projects related to Configurational Entropy (CE) — an
+A Python library for work on Configurational Entropy (CE): an
 information-theoretic measure of spatial complexity for field configurations.
 
 ## Installation
@@ -13,10 +13,9 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-Requires Python 3.10+. Dependencies (numpy, scipy, matplotlib, astropy, tqdm)
-are installed automatically. The
-[Getting Started](https://damiansowinski.com/pyCE/getting_started.html) guide is
-the authoritative reference for installation.
+Requires Python 3.10+; numpy, scipy, matplotlib, astropy, and tqdm are installed
+automatically. The authoritative reference for installation is
+[Getting Started](https://damiansowinski.com/pyCE/getting_started.html).
 
 ## Modules
 
@@ -43,9 +42,9 @@ norm = radial_integrate(r, f**2, 3)  # d-dimensional radial integration
 
 ## Documentation
 
-The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/)
-(or run `import pyCE; pyCE.docs()` to open it). To build locally from the Sphinx
-sources in `docs/`:
+The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/),
+or run `import pyCE; pyCE.docs()` to open it. To build the Sphinx sources in
+`docs/` locally:
 
 ```bash
 source .venv/bin/activate

@@ -1,10 +1,9 @@
 Getting Started
 ===============
 
-In this guide you will install pyCE and compute your first configurational
-entropy. Why a whole page for an install? Because the library leans on the
-scientific Python stack — numpy, scipy, matplotlib, and astropy — and a clean
-environment now will save you headaches later.
+Here you will install pyCE and compute your first configurational entropy. The
+library leans on the scientific Python stack - numpy, scipy, matplotlib, and
+astropy - so a clean environment now saves you headaches later.
 
 Installation
 ^^^^^^^^^^^^
@@ -18,9 +17,8 @@ virtual environment::
     source .venv/bin/activate
     pip install -e .
 
-The ``-e`` flag installs in editable mode — changes you make to the source are
-picked up immediately, with no reinstall required. Check that everything
-works::
+The ``-e`` flag installs in editable mode: changes you make to the source are
+picked up immediately, with no reinstall. Check that the install works::
 
     >>> import pyCE
 
@@ -29,8 +27,8 @@ If the import goes through quietly, you're ready.
 Your first configurational entropy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's compute the configurational entropy of the most familiar localized
-profile there is — a Gaussian in three spatial dimensions::
+Let's compute the configurational entropy of a Gaussian in three spatial
+dimensions, the most familiar localized profile there is::
 
     import numpy as np
     from pyCE.math import radialFT, radial_integrate
@@ -45,12 +43,12 @@ profile there is — a Gaussian in three spatial dimensions::
     Sc = -radial_integrate(k, mf*np.log(np.finfo(float).eps + mf), 3)
     print(Sc)
 
-Three lines of physics: transform, normalize, integrate. Every guide in this
-documentation is a variation on that theme, with the field profile coming from
-a shooting method, a lattice simulation, a stellar model, or a satellite.
+Transform, normalize, integrate. Every guide in this documentation is a
+variation on that theme, with the field profile coming from a shooting
+method, a lattice simulation, a stellar model, or a satellite.
 
-Before moving on, convince yourself that the transform can be trusted.
-Plancherel's theorem holds on the discrete grids by construction::
+Convince yourself that the transform can be trusted. Plancherel's theorem holds
+on the discrete grids by construction::
 
     print(radial_integrate(k, np.abs(ft)**2, 3)
           / radial_integrate(r, f**2, 3))
