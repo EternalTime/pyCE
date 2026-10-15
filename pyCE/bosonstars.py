@@ -57,19 +57,23 @@ class BosonStar:
 
     Attributes
     ----------
-    r : ndarray
+    r : ~numpy.ndarray
         Radial grid.
-    phi, Phi : ndarray
-        Scalar field profile and its radial derivative.
-    a, alpha : ndarray
-        Radial metric function and lapse, with the lapse rescaled so
-        :math:`\alpha \to 1` at the outer edge (asymptotic flatness).
+    phi : ~numpy.ndarray
+        Scalar field profile.
+    Phi : ~numpy.ndarray
+        Radial derivative of the scalar field profile.
+    a : ~numpy.ndarray
+        Radial metric function.
+    alpha : ~numpy.ndarray
+        Lapse, rescaled so :math:`\alpha \to 1` at the outer edge
+        (asymptotic flatness).
     omega : float
         Frequency eigenvalue of the harmonic ansatz; :math:`\omega < 1`
         signals a gravitationally bound configuration.
-    rho : ndarray
+    rho : ~numpy.ndarray
         Energy density.
-    mass : ndarray
+    mass : ~numpy.ndarray
         Misner-Sharp mass within radius r,
         :math:`m(r) = (r/2)(1 - 1/a^2)`.
     M : float
@@ -77,9 +81,11 @@ class BosonStar:
     R : float
         Effective radius: the first moment of r over the proper energy
         distribution.
-    denFT, k : ndarray
-        Radial Fourier transform of rho and its k-grid.
-    mf : ndarray
+    denFT : ~numpy.ndarray
+        Radial Fourier transform of rho.
+    k : ~numpy.ndarray
+        Wavenumber grid of denFT.
+    mf : ~numpy.ndarray
         Modal fraction ``|denFT|**2 / max|denFT|**2``.
     Sc : float
         Configurational entropy, :math:`-\int \mathrm{mf} \, \ln(\mathrm{mf})`

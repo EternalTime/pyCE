@@ -52,9 +52,15 @@ extensions = [
     'sphinx_copybutton',
 ]
 
+# Report every cross-reference whose target cannot be found.  With the -W
+# in docs/Makefile, a dead reference fails the build instead of rendering as
+# plain text.
+nitpicky = True
+
 napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
+napoleon_use_rtype = False
 
 copybutton_prompt_text = r'>>> |\.\.\. '
 copybutton_prompt_is_regexp = True
@@ -213,8 +219,12 @@ epub_exclude_files = ['search.html']
 
 # -- Options for intersphinx extension ---------------------------------------
 
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+# Resolve references to the Python standard library and to NumPy (docstrings
+# type array attributes as ``~numpy.ndarray``).
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://numpy.org/doc/stable', None),
+}
 
 
 class _IgnoreUnreachableInventories(logging.Filter):
@@ -227,7 +237,9 @@ class _IgnoreUnreachableInventories(logging.Filter):
     match it (see ``sphinx.util.logging.is_suppressed_warning``).  Only this
     one message is dropped: a malformed ``intersphinx_mapping`` is logged as an
     error and unresolved cross-references are reported separately, so both
-    still fail the build.
+    still fail the build.  Under ``nitpicky`` that includes references into an
+    inventory that could not be fetched, so a build without network access to
+    the inventories still fails, just with a clearer per-reference message.
     """
 
     def filter(self, record):
