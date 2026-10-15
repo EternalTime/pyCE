@@ -43,7 +43,7 @@ class BosonStar:
     dr : float, optional
         Radial step size (default .01). For small :math:`\phi_0` the
         gradients are gentle but the star is large; for large
-        :math:`\phi_0` the reverse — lower `dr` if the shooting method
+        :math:`\phi_0` the reverse - lower `dr` if the shooting method
         stalls.
     r_max : float, optional
         Maximum integration radius (default 50). Too small and the shot
