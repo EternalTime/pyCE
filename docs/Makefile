@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 # -W turns Sphinx warnings into errors, so a stale toctree entry, a malformed
 # directive or a duplicate label fails the build instead of scrolling past.
-# (Unresolved Python cross-references stay silent unless -n is added too.)
+# Because conf.py sets nitpicky = True, dead cross-references fail it too.
 # It lives here rather than in the CI command so that the plain
 # `make -C docs html` published in the README behaves the same on a
 # contributor's machine as it does on GitHub.  `?=` keeps it overridable, e.g.

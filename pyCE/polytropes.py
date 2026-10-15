@@ -32,13 +32,13 @@ class polytrope:
 
     Attributes
     ----------
-    theta : ndarray
+    theta : ~numpy.ndarray
         Lane-Emden profile.
-    psi : ndarray
+    psi : ~numpy.ndarray
         Radial derivative of :math:`\theta`.
-    rho : ndarray
+    rho : ~numpy.ndarray
         Scaled density profile.
-    r : ndarray
+    r : ~numpy.ndarray
         Radial distance array in scaled lengths.
     """
     def __init__(self,n = 1.5,dr = .01):

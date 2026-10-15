@@ -46,24 +46,38 @@ class instanton:
 
     Attributes
     ----------
-    r : ndarray
+    r : ~numpy.ndarray
         Radial grid on which the bounce was accepted.
-    B, DB : ndarray
-        Bounce profile :math:`B(r)` and its radial derivative :math:`B'(r)`.
+    B : ~numpy.ndarray
+        Bounce profile :math:`B(r)`.
+    DB : ~numpy.ndarray
+        Radial derivative :math:`B'(r)` of the bounce profile.
     B0 : float
         Core value :math:`B(0)` found by the shooting method.
-    Bmin, Bmax : float
-        Initial bracket for the shooting method.
-    PEdens, GEdens, rho : ndarray
-        Potential, gradient, and total energy densities.
-    PE, GE, E : float
-        Radially integrated potential, gradient, and total energies.
+    Bmin : float
+        Lower end of the initial bracket for the shooting method.
+    Bmax : float
+        Upper end of the initial bracket for the shooting method.
+    PEdens : ~numpy.ndarray
+        Potential energy density.
+    GEdens : ~numpy.ndarray
+        Gradient energy density.
+    rho : ~numpy.ndarray
+        Total energy density.
+    PE : float
+        Radially integrated potential energy.
+    GE : float
+        Radially integrated gradient energy.
+    E : float
+        Radially integrated total energy.
     Se : float
         Euclidean action: rho integrated in d+1 dimensions (the O(d+1)
         bounce interpretation of the static d-dimensional profile).
-    denFT, k : ndarray
-        Radial Fourier transform of rho and its k-grid.
-    mf : ndarray
+    denFT : ~numpy.ndarray
+        Radial Fourier transform of rho.
+    k : ~numpy.ndarray
+        Wavenumber grid of denFT.
+    mf : ~numpy.ndarray
         Modal fraction ``|denFT|**2 / max|denFT|**2``.
     Sc : float
         Configurational entropy, :math:`-\int \mathrm{mf} \, \ln(\mathrm{mf})`

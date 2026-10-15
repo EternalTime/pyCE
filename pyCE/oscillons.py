@@ -68,11 +68,11 @@ class oscillon:
 
     Attributes
     ----------
-    E : ndarray
+    E : ~numpy.ndarray
         Energy history of the oscillon (set by `simulate_oscillon`).
     core : list
         Core value history, phi(r=0,t) (set by `simulate_oscillon`).
-    time : ndarray
+    time : ~numpy.ndarray
         Time values for the energy/core histories (set by
         `simulate_oscillon`).
 
