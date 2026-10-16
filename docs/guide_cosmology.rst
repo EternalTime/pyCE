@@ -7,7 +7,7 @@ it away from New York City, and not after evicting the pigeons. The hiss was the
 and in the decades since, COBE, WMAP, and Planck have turned that noise into
 the most precisely measured spectrum in cosmology. The angular power spectrum
 :math:`C_\ell` is usually mined for cosmological parameters; the
-:mod:`pyCE.cosmology` module asks a different question of it — how much
+:mod:`pyCE.cosmology` module asks a different question of it - how much
 information does the spectrum carry, and how is that information distributed
 across multipoles?
 
@@ -23,7 +23,7 @@ offline::
 
 The result is a dictionary with the multipoles ``ell``, the spectra ``Dl``
 and ``Cl``, and the measurement ``error``. The Planck release-2 spectra are
-downloaded from IRSA on demand — same call, ``telescope = 'Planck'`` — and
+downloaded from IRSA on demand - same call, ``telescope = 'Planck'`` - and
 the Planck best-fit theory curve comes from ``psType = 'fit'``. Both require
 a network connection.
 
@@ -42,7 +42,7 @@ and Kullback–Leibler divergence then do what they always do::
     mf = aps.modal_fraction(wmap['ell'], wmap['Cl'].copy())
     print(aps.entropy(mf.copy()))
 
-Pay attention to the ``.copy()`` calls — they are not decoration. These
+Pay attention to the ``.copy()`` calls - they are not decoration. These
 functions flag invalid entries by writing NaN into their arguments in place,
 so hand them copies whenever you intend to reuse a spectrum.
 
@@ -58,11 +58,11 @@ fractions::
     q  = aps.modal_fraction(wmap['ell'], Cl_fit.copy())
     print(aps.KL_divergence(p.copy(), q.copy()))
 
-The divergence is measured in bits, and it is not symmetric — :math:`D(p\,\|\,q)`
+The divergence is measured in bits, and it is not symmetric - :math:`D(p\,\|\,q)`
 answers how surprised you are by the data when you believed the theory, which
 is the direction cosmology usually cares about.
 
-For spectra on a continuous wavenumber grid — matter power spectra — the
+For spectra on a continuous wavenumber grid - matter power spectra - the
 parallel measures live in :mod:`pyCE.cosmology.analysis.mps`, with integrals
 in place of sums. And for fitting a noisy spectrum without committing to a
 parametric model, :func:`pyCE.cosmology.analysis.aps.nonparametric_fit`

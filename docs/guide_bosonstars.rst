@@ -8,7 +8,7 @@ system. Remo
 Ruffini and Silvano Bonazzola reached the same configurations a year later
 from the quantum side, as the ground state of a cold cloud of gravitating
 bosons. Unlike a fermion star, nothing here is held up by degeneracy
-pressure — the star is supported by the uncertainty principle wearing a
+pressure - the star is supported by the uncertainty principle wearing a
 classical disguise, the field's intrinsic gradient energy resisting
 collapse. Whether dark matter builds such objects remains an open question,
 which is precisely what keeps them interesting.
@@ -32,7 +32,7 @@ for :math:`(a, \alpha, \phi, \Phi \equiv \phi')`, with the potential
 profile that decays into flat space, and the nodeless one is the ground
 state. The :class:`pyCE.bosonstars.BosonStar` class finds it by bisection
 shooting on the central lapse, exactly as :mod:`pyCE.instantons` shoots on
-the core field value — the same numerical instinct, pointed at a different
+the core field value - the same numerical instinct, pointed at a different
 equation.
 
 Solving a star
@@ -53,13 +53,13 @@ Everything happens at instantiation::
     print(star.M, star.R, star.omega)
 
 For :math:`\phi_0 = 0.1` you should find M = 0.533 (in units of
-:math:`M_{\rm Pl}^2/m`), R = 6.0, and :math:`\omega = 0.937` — a bound
+:math:`M_{\rm Pl}^2/m`), R = 6.0, and :math:`\omega = 0.937` - a bound
 state, since :math:`\omega < 1` means the star sits below the free-particle
 mass threshold. The metric functions (``star.a``, ``star.alpha``), the
 energy density (``star.rho``), the Misner-Sharp mass function
 (``star.mass``), and the configurational entropy machinery (``star.mf``,
 ``star.k``, ``star.Sc``) all hang off the object. Pass ``lamb`` to switch
-on the quartic self-interaction — Monica Colpi, Stuart Shapiro, and Ira
+on the quartic self-interaction - Monica Colpi, Stuart Shapiro, and Ira
 Wasserman showed in 1986 that it inflates these stars from curiosities to
 astrophysical contenders. Pass ``plot_progress = True`` to watch the
 shooting method work; the failed shots tell you as much about the
@@ -80,11 +80,11 @@ The defining plot of the subject is the mass against the core value::
     plt.ylabel('$M$')
     plt.show()
 
-The curve rises, peaks at the Kaup limit — M = 0.633 near
-:math:`\phi_0 = 0.27` — and turns over; configurations past the peak are
+The curve rises, peaks at the Kaup limit - M = 0.633 near
+:math:`\phi_0 = 0.27` - and turns over; configurations past the peak are
 unstable to collapse, in close analogy with the white-dwarf story. Now make
 the information-theoretic version of the plot: ``[s.Sc for s in stars]``
 against :math:`\phi_0`. How does the configurational entropy behave as the
 family approaches the stability boundary? That question is exactly the kind
-this library was built to ask — see Gleiser & Sowinski, *Phys. Lett. B*
+this library was built to ask - see Gleiser & Sowinski, *Phys. Lett. B*
 **727**, 272 (2013) before peeking at the answer.

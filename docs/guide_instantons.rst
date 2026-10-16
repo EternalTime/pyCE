@@ -3,7 +3,7 @@ Instantons
 
 The false vacuum is not forever. In 1977 Sidney Coleman worked out its
 fate: a metastable state decays by nucleating bubbles of true vacuum, and
-the bubble that controls the decay rate — the bounce — is an O(d)-symmetric
+the bubble that controls the decay rate - the bounce - is an O(d)-symmetric
 solution of the Euclidean equations of motion. The :mod:`pyCE.instantons` module finds these
 bounces and asks an information-theoretic question of them: how is the energy
 of a bounce organized across scales, and how does that organization respond
@@ -19,8 +19,8 @@ The field lives in the asymmetric double-well potential
     V(B) = \frac{1}{2}B^2 - \frac{\alpha}{3}B^3 + \frac{1}{4}B^4,
     \qquad \alpha = \frac{3}{\sqrt{2}}\,(1+g),
 
-where the asymmetry factor :math:`g` controls how far the two vacua are split
-— at :math:`g=0` they are degenerate, and the bubble wall becomes thin. The
+where the asymmetry factor :math:`g` controls how far the two vacua are split -
+at :math:`g=0` they are degenerate, and the bubble wall becomes thin. The
 bounce satisfies
 
 .. math::
@@ -30,8 +30,8 @@ bounce satisfies
 with :math:`B'(0)=0` and :math:`B\to 0` as :math:`r\to\infty`. This is a
 boundary value problem with an unstable answer: start the field a little too
 high at the origin and it overshoots, a little too low and it rolls back into
-the false vacuum. The module turns this instability into an algorithm — the
-shooting method — bisecting on the core value :math:`B(0)` until the profile
+the false vacuum. The module turns this instability into an algorithm - the
+shooting method - bisecting on the core value :math:`B(0)` until the profile
 decays cleanly into the false vacuum.
 
 Solving a bounce
@@ -49,7 +49,7 @@ Everything happens at instantiation::
     plt.ylabel('$B(r)$')
     plt.show()
 
-The solve takes a few seconds — each bisection step integrates the profile
+The solve takes a few seconds - each bisection step integrates the profile
 out with RK4, and overshooting runs are allowed to diverge before being
 discarded. Don't be alarmed by overflow warnings during the solve; diverging
 is precisely how a failed shot announces itself.
@@ -75,6 +75,6 @@ Try sweeping the asymmetry::
 
 Convince yourself of the trend before you plot it: as :math:`g` grows the
 bounce localizes, its power spectrum spreads, and the configurational entropy
-responds. For the relationship between :math:`S_c` and the Euclidean action —
-and what it suggests about decay rates — see Gleiser & Sowinski, *Phys. Rev.
+responds. For the relationship between :math:`S_c` and the Euclidean action -
+and what it suggests about decay rates - see Gleiser & Sowinski, *Phys. Rev.
 D* **98**, 056026 (2018).

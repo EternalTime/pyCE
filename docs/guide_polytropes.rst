@@ -6,7 +6,7 @@ working largely by himself, asked what the inside of the Sun must look
 like if it were a self-gravitating sphere of gas in hydrostatic
 equilibrium. Robert Emden
 systematized the answer in his 1907 *Gaskugeln*, and the equation that bears
-both their names has been a workhorse of stellar structure ever since —
+both their names has been a workhorse of stellar structure ever since -
 simple enough to solve on a laptop in milliseconds, rich enough that
 Chandrasekhar built the white-dwarf mass limit on top of it.
 
@@ -45,7 +45,7 @@ Solving a polytrope
     plt.show()
 
 The profile :math:`\theta` is on ``p.theta``, its derivative on ``p.psi``,
-the scaled density on ``p.rho``, and the radial grid on ``p.r`` — so the
+the scaled density on ``p.rho``, and the radial grid on ``p.r`` - so the
 surface radius is simply ``p.r[-1]``. For :math:`n = 1.5` you should find it
 at 3.65, within a grid spacing of the literature value 3.6538; check it. Then
 convince yourself the solver is honest by comparing
@@ -53,16 +53,16 @@ the :math:`n = 1` output against the exact solution
 :math:`\theta = \sin(r)/r`.
 
 Two warnings from the structure of the equation itself. First, the index
-:math:`n = 5` marks the boundary of compactness — the famous Schuster–Emden
-solution has finite mass but infinite radius — so the surface-finding loop
+:math:`n = 5` marks the boundary of compactness - the famous Schuster–Emden
+solution has finite mass but infinite radius - so the surface-finding loop
 will never terminate there. Stick to :math:`n < 5` unless you have somewhere
 to be tomorrow. Second, the integrator steps slightly past the surface before
 stopping, where :math:`\theta < 0` raises a harmless warning for non-integer
 :math:`n`; the overshoot is truncated from the returned profile.
 
 With :math:`\theta` in hand, the configurational entropy of a stellar density
-profile is the same three-step computation as everywhere else in this library
-— transform ``p.rho`` with :func:`pyCE.math.radialFT`, normalize, and
+profile is the same three-step computation as everywhere else in this library -
+transform ``p.rho`` with :func:`pyCE.math.radialFT`, normalize, and
 integrate. Compare :math:`S_c` across the index family and you have
 reproduced the heart of the configurational-entropy approach to compact
 objects: in Gleiser & Sowinski, *Phys. Lett. B* **727**, 272 (2013), this
