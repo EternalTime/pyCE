@@ -44,17 +44,7 @@ norm = radial_integrate(r, f**2, 3)  # d-dimensional radial integration
 ## Documentation
 
 The documentation is hosted at [damiansowinski.com/pyCE](https://damiansowinski.com/pyCE/),
-or run `import pyCE; pyCE.docs()` to open it. To build the Sphinx sources in
-`docs/` locally:
-
-```bash
-source .venv/bin/activate
-pip install -e '.[docs]'
-make -C docs html
-```
-
-The guides in `docs/` are Jupyter notebooks, and the build runs every one of them so that the outputs on the page come from the current code.
-That takes about six minutes, most of it the boson-star mass curve.
+or run `import pyCE; pyCE.docs()` to open it.
 
 ## Testing
 

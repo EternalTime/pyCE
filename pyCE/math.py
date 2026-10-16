@@ -19,6 +19,10 @@ utilities.
 import numpy as np
 import scipy.special as sp
 
+#Rows of k per block in radialFT: bounds each temporary kernel to
+#_FT_BLOCK x len(r) values instead of the full 5*len(r) x len(r)
+_FT_BLOCK = 1024
+
 def radialFT(d,f,r):
     r"""Radial Fourier transform of a radial function in d dimensions.
 
@@ -48,6 +52,8 @@ def radialFT(d,f,r):
     singular at k = 0, so ft[0] is instead obtained by extrapolating ft[1:8]
     with a seventh-order one-sided finite-difference (interpolation) stencil.
     For d = 1 the transform reduces to a plain cosine transform.
+    Either kernel is evaluated in blocks of k, so the temporaries hold a
+    block of rows at a time rather than the full ``len(k) x len(r)`` matrix.
 
     The result is rescaled by a constant so that Plancherel's theorem,
     :math:`\|f\|^2 = \|\mathrm{ft}\|^2` (with the d-dimensional radial
@@ -57,11 +63,19 @@ def radialFT(d,f,r):
     if d>1:
         a      = float(d)/2.0
         ft     = np.zeros(np.shape(k))
-        ft[1:] = np.sqrt(np.pi)*(2.0**(a-2))*(k[1:]**(1-a))*np.trapezoid(f*sp.jv(a-1,np.outer(k[1:],r))*(r**a),r)
+        #Bessel kernel evaluated in blocks of k so peak memory stays O(block*len(r))
+        g      = f*(r**a)
+        for i in range(1, len(k), _FT_BLOCK):
+            kb = k[i:i+_FT_BLOCK]
+            ft[i:i+len(kb)] = np.trapezoid(g*sp.jv(a-1,np.outer(kb,r)),r)
+        ft[1:] *= np.sqrt(np.pi)*(2.0**(a-2))*(k[1:]**(1-a))
         #This uses finite differences to get the value at k=0
         ft[0]  = sum(np.array([287/48.0, -(61/4.0), 1033/48.0, -(109/6.0), 147/16.0, -(31/12.0), 5/16.0])*ft[1:8])
     else:
-        ft = np.trapezoid(np.cos(np.outer(k,r))*f,r)
+        ft = np.zeros(np.shape(k),dtype=np.result_type(f,float))
+        for i in range(0, len(k), _FT_BLOCK):
+            kb = k[i:i+_FT_BLOCK]
+            ft[i:i+len(kb)] = np.trapezoid(np.cos(np.outer(kb,r))*f,r)
     #normalizes to ensure Plancheral's theorem holds
     ft = ft*np.sqrt(radial_integrate(r,np.abs(f)**2,d)/radial_integrate(k,np.abs(ft)**2,d))
     return ft,k
