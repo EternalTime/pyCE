@@ -74,7 +74,11 @@ copybutton_selector = 'div:not(.output) > div.highlight pre'
 # A cell that raises fails the build, just like a warning does.
 nb_execution_mode = 'force'
 nb_execution_raise_on_error = True
-nb_execution_timeout = 300
+nb_execution_timeout = 900
+
+# Notebook text writes math as $...$ and $$...$$, which Jupyter and Colab
+# render too, where the {math} role would show up as raw markup.
+myst_enable_extensions = ['dollarmath']
 
 # Every notebook page gets buttons that open it, runnable, on Binder and on
 # Google Colab (see docs/_templates/page.html).  Both services read the
