@@ -19,7 +19,7 @@ The field lives in the asymmetric double-well potential
     V(B) = \frac{1}{2}B^2 - \frac{\alpha}{3}B^3 + \frac{1}{4}B^4,
     \qquad \alpha = \frac{3}{\sqrt{2}}\,(1+g),
 
-where the asymmetry factor :math:`g` controls how far the two vacua are split -
+where the asymmetry factor :math:`g` controls how far the two vacua are split;
 at :math:`g=0` they are degenerate, and the bubble wall becomes thin. The
 bounce satisfies
 
@@ -49,7 +49,7 @@ Everything happens at instantiation::
     plt.ylabel('$B(r)$')
     plt.show()
 
-The solve takes a few seconds - each bisection step integrates the profile
+The solve takes a few seconds: each bisection step integrates the profile
 out with RK4, and overshooting runs are allowed to diverge before being
 discarded. Don't be alarmed by overflow warnings during the solve; diverging
 is precisely how a failed shot announces itself.
