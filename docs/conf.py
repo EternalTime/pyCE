@@ -100,6 +100,11 @@ pygments_style = 'sphinx'
 #
 html_theme = 'sphinx_rtd_theme'
 
+# The default "<project> <release> documentation" leaves a double space while
+# release is empty.  docs/_templates/layout.html appends this to each page's
+# browser tab title after a plain dash.
+html_title = u'pyCE documentation'
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
