@@ -50,6 +50,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
     'sphinx_copybutton',
+    'myst_nb',
 ]
 
 # Report every cross-reference whose target cannot be found.  With the -W
@@ -64,6 +65,29 @@ napoleon_use_rtype = False
 
 copybutton_prompt_text = r'>>> |\.\.\. '
 copybutton_prompt_is_regexp = True
+# Copy buttons go on code, not on the outputs of notebook cells.
+copybutton_selector = 'div:not(.output) > div.highlight pre'
+
+# Pages written as Jupyter notebooks (docs/*.ipynb) are run from top to
+# bottom on every build, so the outputs a reader sees always come from the
+# code beside them and the repository stores the notebooks without outputs.
+# A cell that raises fails the build, just like a warning does.
+nb_execution_mode = 'force'
+nb_execution_raise_on_error = True
+nb_execution_timeout = 900
+
+# Notebook text writes math as $...$ and $$...$$, which Jupyter and Colab
+# render too, where the {math} role would show up as raw markup.
+myst_enable_extensions = ['dollarmath']
+
+# Every notebook page gets buttons that open it, runnable, on Binder and on
+# Google Colab (see docs/_templates/page.html).  Both services read the
+# notebook from this public repository and branch.
+html_context = {
+    'launch_repo': 'EternalTime/pyCE',
+    'launch_branch': 'master',
+    'launch_path': 'docs',
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -72,7 +96,10 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.ipynb': 'myst-nb',
+}
 
 # The master toctree document.
 master_doc = 'index'
@@ -87,7 +114,7 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

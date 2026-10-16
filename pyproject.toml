@@ -39,6 +39,7 @@ docs = [
     "sphinx",
     "sphinx_rtd_theme",
     "sphinx-copybutton",
+    "myst-nb",
 ]
 test = [
     "pytest",
