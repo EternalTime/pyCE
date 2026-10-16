@@ -26,7 +26,7 @@ long-lived, localized oscillations of a real scalar field. The
 ``polytropes`` module solves the Lane-Emden equation for self-gravitating
 spheres of gas. The ``cosmology`` module brings the same
 information-theoretic lens to the angular power spectrum of the cosmic
-microwave background — WMAP data is bundled, Planck data is a download away.
+microwave background: WMAP data is bundled, Planck data is a download away.
 Underneath all four sits ``pyCE.math``, where the radial Fourier transform
 lives.
 

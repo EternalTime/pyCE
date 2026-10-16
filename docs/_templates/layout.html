@@ -1,0 +1,6 @@
+{#- Separate the page title from the project title with a plain dash
+    instead of the theme's em dash, e.g. "Polytropes - pyCE documentation". #}
+{%- extends "!layout.html" %}
+{%- block htmltitle %}
+  <title>{{ title|striptags|e }}{% if not embedded and docstitle %} - {{ docstitle|e }}{% endif %}</title>
+{%- endblock -%}
